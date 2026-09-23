@@ -235,12 +235,9 @@ export function ReviewerPage() {
       setSuccess(false);
       setReviewingTape(null);
       setAnswers(emptyAnswers());
-      setBodyFallback('');
       if (selectedTape) loadReviews(selectedTape.id);
     }, 1800);
   };
-
-  const [bodyFallback, setBodyFallback] = useState('');
 
   return (
     <div className="min-h-screen bg-ink-950 text-cream-100">
