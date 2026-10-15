@@ -89,7 +89,7 @@ export function TapeDetailModal({ tape, onClose, onCollabClick }: TapeDetailModa
         {/* Body */}
         <div className="p-5 sm:p-6 space-y-5">
           {/* Audio player */}
-          <AudioPlayer title={tape.title} artist={tape.artist} duration={tape.duration} />
+          <AudioPlayer title={tape.title} artist={tape.artist} duration={tape.duration} audioUrl={tape.audio_url} />
 
           {/* Description */}
           <p className="text-sm text-cream-200/60 leading-relaxed">{tape.description}</p>
