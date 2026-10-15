@@ -1,4 +1,4 @@
-import { Disc3, Instagram, Twitter, Youtube, Github } from 'lucide-react';
+import { Disc3, Instagram, Youtube, Music2, AudioLines } from 'lucide-react';
 
 const footerLinks = {
   Platform: ['Discover', 'Fresh Tapes', 'Reviews', 'Collaborate', 'Make It Real', 'Drop a Tape'],
@@ -7,10 +7,12 @@ const footerLinks = {
 };
 
 const socials = [
-  { icon: Instagram, href: '#', label: 'Instagram' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Youtube, href: '#', label: 'YouTube' },
-  { icon: Github, href: '#', label: 'GitHub' },
+  { icon: AudioLines, href: 'https://on.soundcloud.com/v0cLtHZAnlulIhb8UE', label: 'SoundCloud' },
+  { icon: Youtube, href: 'https://youtube.com/@losomedia?si=-SpFSXmMtqZnSpEu', label: 'YouTube' },
+  { icon: Music2, href: 'https://open.spotify.com/artist/32WISuWgR93g29jcK6Ujqf?si=W44fykA4S4GMuQC6ae60mQ', label: 'Spotify' },
+  { icon: Disc3, href: 'https://suno.com/@nakajoneso33', label: 'Suno' },
+  { icon: Music2, href: 'https://www.tiktok.com/@3_loso_3?_r=1&_t=ZP-97b162l7M9X', label: 'TikTok' },
+  { icon: Instagram, href: 'https://www.instagram.com/losojones33?igsh=N3Z2dmRtOWU5YXF4', label: 'Instagram' },
 ];
 
 export function Footer() {
@@ -34,21 +36,28 @@ export function Footer() {
               Where AI meets human musicians. Create, pitch, review, collaborate, and make it real.
             </p>
 
-            {/* Socials */}
-            <div className="flex gap-3 mt-6">
-              {socials.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className="w-9 h-9 rounded-lg bg-ink-800 border border-ink-600/50 flex items-center justify-center text-cream-300/50 hover:text-gold-400 hover:border-gold-500/40 transition-all"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                );
-              })}
+            {/* LosoMedia social links */}
+            <div className="mt-6">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-gold-500/60 mb-3">Find LosoMedia</p>
+              <div className="grid grid-cols-3 gap-2 max-w-sm">
+                {socials.map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`LosoMedia on ${social.label}`}
+                      title={social.label}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-ink-800 border border-ink-600/50 text-cream-300/60 hover:text-gold-400 hover:border-gold-500/40 transition-all"
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span className="text-xs">{social.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
