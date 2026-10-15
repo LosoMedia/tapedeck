@@ -25,10 +25,13 @@ export function AuthPage() {
     if (mode === 'signup') {
       const { error } = await supabase.auth.signUp({
         email: email.trim(), password,
-        options: { data: { display_name: name.trim() } },
+        options: {
+          data: { display_name: name.trim() },
+          emailRedirectTo: window.location.origin + '/tapedeck/auth',
+        },
       });
       if (error) setError(error.message);
-      else setMessage('Account created. Check your email if confirmation is required.');
+      else setMessage('Account created. Check your email to confirm your account, then return here to sign in.');
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) setError(error.message);
