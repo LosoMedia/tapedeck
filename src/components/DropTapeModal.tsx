@@ -196,17 +196,23 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
         ) : (
           <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
             {/* Audio upload, placed first so it's immediately visible */}
-            <div className="rounded-lg border-2 border-gold-500/60 bg-gold-500/10 p-4">
-              <label htmlFor="tape-audio-file" className="font-heading text-sm text-gold-400 mb-2 block">1. CHOOSE YOUR MP3 / AUDIO FILE *</label>
-              <p className="text-xs text-cream-200/60 mb-3">Select a track from your device. MP3, M4A, WAV, AAC, OGG, FLAC, or WebM. Maximum 50 MB.</p>
+            <div className="rounded-lg border-2 border-gold-400 bg-ink-900 p-5">
+              <label htmlFor="tape-audio-file" className="block cursor-pointer">
+                <span className="block font-heading text-base font-bold text-gold-300 mb-2">1. CHOOSE YOUR MP3 / AUDIO FILE *</span>
+                <span className="block text-sm text-cream-100 mb-4">Tap the button below to select a song from your phone or computer. MP3, M4A, WAV, AAC, OGG, FLAC, or WebM. Maximum 50 MB.</span>
+                <span className="inline-flex items-center gap-2 rounded-md bg-gold-400 px-5 py-3 font-bold text-ink-950">
+                  <Upload className="h-5 w-5" />
+                  {audioFile ? 'Choose a different audio file' : 'BROWSE FILES'}
+                </span>
+              </label>
               <input
                 id="tape-audio-file"
                 type="file"
                 accept="audio/mpeg,audio/mp4,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm"
                 onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
-                className="block w-full text-sm text-cream-100 file:mr-3 file:rounded file:border-0 file:bg-gold-500 file:px-3 file:py-2 file:font-semibold file:text-ink-950 hover:file:bg-gold-400"
+                style={{ display: 'block', width: '100%', marginTop: '12px', color: '#fff', fontSize: '14px', minHeight: '44px', opacity: 1, visibility: 'visible' }}
               />
-              {audioFile && <p className="mt-2 text-xs text-signal-green">{audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB selected</p>}
+              {audioFile && <p className="mt-3 text-sm font-semibold text-signal-green">Selected: {audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB</p>}
             </div>
 
             {/* Title + Artist */}
