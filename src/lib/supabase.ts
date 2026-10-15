@@ -15,6 +15,7 @@ export interface TapeRow {
   bpm: number;
   musical_key: string;
   duration: string;
+  audio_url?: string | null;
   cover_url: string;
   description: string;
   skills_needed: string[];
