@@ -30,6 +30,7 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
   const [musicalKey, setMusicalKey] = useState('');
   const [description, setDescription] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
+  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [skills, setSkills] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -61,33 +62,83 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
       setError('Title and artist name are required.');
       return;
     }
+    if (!audioFile) {
+      setError('Choose an audio file to upload.');
+      return;
+    }
+    if (audioFile.size > 50 * 1024 * 1024) {
+      setError('Audio files must be 50 MB or smaller.');
+      return;
+    }
+    const allowedTypes = ['audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/x-wav', 'audio/aac', 'audio/ogg', 'audio/flac', 'audio/webm'];
+    if (audioFile.type && !allowedTypes.includes(audioFile.type)) {
+      setError('Please upload an MP3, M4A, WAV, AAC, OGG, FLAC, or WebM audio file.');
+      return;
+    }
 
     setSubmitting(true);
     setError('');
 
-    const { error: insertError } = await supabase.from('tapes').insert({
-      title: title.trim(),
-      artist: artist.trim(),
-      classification,
-      genre: genre.trim(),
-      mood: mood.trim(),
-      bpm: parseInt(bpm) || 120,
-      musical_key: musicalKey.trim(),
-      duration: '0:00',
-      cover_url: coverUrl.trim() || 'https://images.pexels.com/photos/8168566/pexels-photo-8168566.png?auto=compress&cs=tinysrgb&h=650&w=940',
-      description: description.trim(),
-      skills_needed: skills,
-      collaboration_status: 'open',
-      rating: 0,
-      plays: '0',
-    });
+    let uploadedPath: string | null = null;
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('Please sign in before uploading a Tape.');
+      }
 
-    setSubmitting(false);
+      const safeName = audioFile.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+      uploadedPath = `${user.id}/${crypto.randomUUID()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from('tape-audio')
+        .upload(uploadedPath, audioFile, { contentType: audioFile.type || 'application/octet-stream', upsert: false });
+      if (uploadError) throw new Error(`Audio upload failed: ${uploadError.message}`);
 
-    if (insertError) {
-      setError('Something went wrong. Please try again.');
+      const { data: publicData } = supabase.storage.from('tape-audio').getPublicUrl(uploadedPath);
+      const duration = await new Promise<string>((resolve) => {
+        const audio = new Audio();
+        const objectUrl = URL.createObjectURL(audioFile);
+        audio.preload = 'metadata';
+        audio.onloadedmetadata = () => {
+          const seconds = Number.isFinite(audio.duration) ? Math.floor(audio.duration) : 0;
+          URL.revokeObjectURL(objectUrl);
+          resolve(`${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`);
+        };
+        audio.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve('0:00');
+        };
+        audio.src = objectUrl;
+      });
+
+      const { error: insertError } = await supabase.from('tapes').insert({
+        title: title.trim(),
+        artist: artist.trim(),
+        classification,
+        genre: genre.trim(),
+        mood: mood.trim(),
+        bpm: parseInt(bpm) || 120,
+        musical_key: musicalKey.trim(),
+        duration,
+        audio_url: publicData.publicUrl,
+        cover_url: coverUrl.trim() || 'https://images.pexels.com/photos/8168566/pexels-photo-8168566.png?auto=compress&cs=tinysrgb&h=650&w=940',
+        description: description.trim(),
+        skills_needed: skills,
+        collaboration_status: 'open',
+        rating: 0,
+        plays: '0',
+      });
+      if (insertError) {
+        await supabase.storage.from('tape-audio').remove([uploadedPath]);
+        uploadedPath = null;
+        throw new Error(`Tape details could not be saved: ${insertError.message}`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to upload this Tape. Please try again.');
+      setSubmitting(false);
       return;
     }
+
+    setSubmitting(false);
 
     setSuccess(true);
     setTimeout(() => {
@@ -100,6 +151,7 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
       setMusicalKey('');
       setDescription('');
       setCoverUrl('');
+      setAudioFile(null);
       setSkills([]);
       onSubmitted();
       onClose();
@@ -233,6 +285,19 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
                   className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-gold-500/50 focus:outline-none transition-colors"
                 />
               </div>
+            </div>
+
+            {/* Audio upload */}
+            <div className="rounded-lg border border-gold-500/30 bg-gold-500/5 p-4">
+              <label htmlFor="tape-audio-file" className="font-mono text-[10px] uppercase tracking-wider text-gold-400 mb-2 block">Audio File * (MP3, M4A, WAV, AAC, OGG, FLAC, WebM · max 50 MB)</label>
+              <input
+                id="tape-audio-file"
+                type="file"
+                accept="audio/mpeg,audio/mp4,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm"
+                onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-cream-100 file:mr-3 file:rounded file:border-0 file:bg-gold-500 file:px-3 file:py-2 file:font-semibold file:text-ink-950 hover:file:bg-gold-400"
+              />
+              {audioFile && <p className="mt-2 text-xs text-cream-200/60">{audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB</p>}
             </div>
 
             {/* Cover URL */}
