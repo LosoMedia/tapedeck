@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Disc3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X, Disc3, UserRound } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const navLinks = [
   { label: 'Discover', href: '#discover' },
@@ -16,12 +18,32 @@ interface NavbarProps {
 export function Navbar({ onDropTape }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setSignedIn(!!data.session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(!!session);
+    });
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setMenuOpen(false);
+  };
 
   return (
     <header
@@ -32,8 +54,7 @@ export function Navbar({ onDropTape }: NavbarProps) {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-2.5 group">
+        <a href="#discover" className="flex items-center gap-2.5 group">
           <div className="relative w-9 h-9 rounded-full bg-ink-800 border border-gold-500/40 flex items-center justify-center group-hover:border-gold-500 transition-colors">
             <Disc3 className="w-5 h-5 text-gold-500 animate-spin-slow" />
           </div>
@@ -43,7 +64,6 @@ export function Navbar({ onDropTape }: NavbarProps) {
           </div>
         </a>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
@@ -57,9 +77,17 @@ export function Navbar({ onDropTape }: NavbarProps) {
           ))}
         </div>
 
-        {/* CTA + mobile toggle */}
         <div className="flex items-center gap-3">
-          <button onClick={onDropTape} className="hidden sm:inline-flex btn-ghost text-sm py-2 px-4">
+          {signedIn ? (
+            <button onClick={signOut} className="hidden sm:inline-flex btn-ghost text-sm py-2 px-4">
+              Sign Out
+            </button>
+          ) : (
+            <Link to="/tapedeck/auth" className="hidden sm:inline-flex btn-ghost text-sm py-2 px-4 items-center gap-2">
+              <UserRound className="w-4 h-4" /> Sign In / Join
+            </Link>
+          )}
+          <button onClick={onDropTape} className="hidden lg:inline-flex btn-primary text-sm py-2 px-4">
             Drop a Tape
           </button>
           <button
@@ -72,7 +100,6 @@ export function Navbar({ onDropTape }: NavbarProps) {
         </div>
       </nav>
 
-      {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-ink-900/95 backdrop-blur-md border-t border-ink-700/50">
           <div className="px-5 py-4 flex flex-col gap-3">
@@ -86,9 +113,16 @@ export function Navbar({ onDropTape }: NavbarProps) {
                 {link.label}
               </a>
             ))}
+            {signedIn ? (
+              <button onClick={signOut} className="btn-ghost text-sm py-2 px-4 mt-2 self-start">Sign Out</button>
+            ) : (
+              <Link to="/tapedeck/auth" onClick={() => setMenuOpen(false)} className="btn-ghost text-sm py-2 px-4 mt-2 self-start">
+                Sign In / Join
+              </Link>
+            )}
             <button
               onClick={() => { setMenuOpen(false); onDropTape(); }}
-              className="btn-ghost text-sm py-2 px-4 mt-2 self-start"
+              className="btn-primary text-sm py-2 px-4 mt-2 self-start"
             >
               Drop a Tape
             </button>
