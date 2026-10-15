@@ -195,6 +195,20 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
           </div>
         ) : (
           <div className="p-5 space-y-4 max-h-[70vh] overflow-y-auto">
+            {/* Audio upload, placed first so it's immediately visible */}
+            <div className="rounded-lg border-2 border-gold-500/60 bg-gold-500/10 p-4">
+              <label htmlFor="tape-audio-file" className="font-heading text-sm text-gold-400 mb-2 block">1. CHOOSE YOUR MP3 / AUDIO FILE *</label>
+              <p className="text-xs text-cream-200/60 mb-3">Select a track from your device. MP3, M4A, WAV, AAC, OGG, FLAC, or WebM. Maximum 50 MB.</p>
+              <input
+                id="tape-audio-file"
+                type="file"
+                accept="audio/mpeg,audio/mp4,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm"
+                onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-cream-100 file:mr-3 file:rounded file:border-0 file:bg-gold-500 file:px-3 file:py-2 file:font-semibold file:text-ink-950 hover:file:bg-gold-400"
+              />
+              {audioFile && <p className="mt-2 text-xs text-signal-green">{audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB selected</p>}
+            </div>
+
             {/* Title + Artist */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
@@ -285,19 +299,6 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
                   className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-gold-500/50 focus:outline-none transition-colors"
                 />
               </div>
-            </div>
-
-            {/* Audio upload */}
-            <div className="rounded-lg border border-gold-500/30 bg-gold-500/5 p-4">
-              <label htmlFor="tape-audio-file" className="font-mono text-[10px] uppercase tracking-wider text-gold-400 mb-2 block">Audio File * (MP3, M4A, WAV, AAC, OGG, FLAC, WebM · max 50 MB)</label>
-              <input
-                id="tape-audio-file"
-                type="file"
-                accept="audio/mpeg,audio/mp4,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm"
-                onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
-                className="block w-full text-sm text-cream-100 file:mr-3 file:rounded file:border-0 file:bg-gold-500 file:px-3 file:py-2 file:font-semibold file:text-ink-950 hover:file:bg-gold-400"
-              />
-              {audioFile && <p className="mt-2 text-xs text-cream-200/60">{audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB</p>}
             </div>
 
             {/* Cover URL */}
