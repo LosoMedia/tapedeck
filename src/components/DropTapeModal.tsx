@@ -198,7 +198,7 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
             {/* Audio upload, placed first so it's immediately visible */}
             <div className="rounded-lg border-2 border-gold-400 bg-ink-900 p-5">
               <label htmlFor="tape-audio-file" className="block cursor-pointer">
-                <span className="block font-heading text-base font-bold text-gold-300 mb-2">1. CHOOSE YOUR MP3 / AUDIO FILE *</span>
+                <span className="block font-heading text-base font-bold text-gold-300 mb-2">STEP 1: SELECT YOUR AUDIO FILE (REQUIRED)</span>
                 <span className="block text-sm text-cream-100 mb-4">Tap the button below to select a song from your phone or computer. MP3, M4A, WAV, AAC, OGG, FLAC, or WebM. Maximum 50 MB.</span>
                 <span className="inline-flex items-center gap-2 rounded-md bg-gold-400 px-5 py-3 font-bold text-ink-950">
                   <Upload className="h-5 w-5" />
@@ -210,7 +210,7 @@ export function DropTapeModal({ open, onClose, onSubmitted }: DropTapeModalProps
                 type="file"
                 accept="audio/mpeg,audio/mp4,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm"
                 onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
-                style={{ display: 'block', width: '100%', marginTop: '12px', color: '#fff', fontSize: '14px', minHeight: '44px', opacity: 1, visibility: 'visible' }}
+                aria-label="Choose audio file to upload" required style={{ display: 'block', width: '100%', minWidth: '0', boxSizing: 'border-box', marginTop: '12px', padding: '14px 10px', color: '#fff', fontSize: '16px', minHeight: '56px', border: '2px dashed #f5c451', borderRadius: '8px', backgroundColor: '#171717', opacity: 1, visibility: 'visible', position: 'relative', zIndex: 2 }}
               />
               {audioFile && <p className="mt-3 text-sm font-semibold text-signal-green">Selected: {audioFile.name} · {(audioFile.size / (1024 * 1024)).toFixed(1)} MB</p>}
             </div>
