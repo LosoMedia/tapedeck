@@ -122,7 +122,13 @@ export function ReviewerPage() {
       .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
-        if (data) setTapes(data as TapeRow[]);
+        const loadedTapes = (data || []) as TapeRow[];
+        setTapes(loadedTapes);
+        const requestedTrackId = new URLSearchParams(window.location.search).get('trackId');
+        if (requestedTrackId) {
+          const requestedTape = loadedTapes.find((tape) => tape.id === requestedTrackId);
+          if (requestedTape) setSelectedTape(requestedTape);
+        }
         setLoading(false);
       });
   }, []);
@@ -224,6 +230,10 @@ export function ReviewerPage() {
     }
 
     localStorage.removeItem(`${DRAFT_KEY}:${reviewingTape.id}`);
+    const { error: queueCompleteError } = await supabase.rpc('complete_tape_review_queue_item', { p_tape_id: reviewingTape.id });
+    if (queueCompleteError) {
+      setError('Review posted successfully, but the queue status could not be updated: ' + queueCompleteError.message);
+    }
     setSuccess(true);
     setReviewsByTape((prev) => {
       const next = { ...prev };
