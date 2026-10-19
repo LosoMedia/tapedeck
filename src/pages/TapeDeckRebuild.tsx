@@ -162,7 +162,7 @@ export function TapeDeckRebuild() {
             <a className="td-link" href="#discover">Discover</a><a className="td-link" href="#community">Community</a><a className="td-link" href="#upload">Upload music</a>
           </nav>
           <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
-            {sessionUser ? <><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#151d2a', color: '#e2e8f0', borderColor: '#354052', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
+            {sessionUser ? <><Link to="/tapedeck/profile" className="td-link" style={{ color: gold }}>My Profile</Link><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#151d2a', color: '#e2e8f0', borderColor: '#354052', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
           </div>
         </div>
       </header>
@@ -224,7 +224,7 @@ export function TapeDeckRebuild() {
               return <article key={tape.id} className="td-card">
                 <div className="td-cover" style={coverStyle(index)}>{tape.cover_url ? <img src={tape.cover_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }} /> : <span className="td-cover-mark">TAPE DECK / {String(index + 1).padStart(2, '0')}</span>}</div>
                 <div className="td-track-title" title={tape.title}>{tape.title || 'Untitled Tape'}</div>
-                <div className="td-muted" style={{ marginBottom: 8 }}>{artistName}</div>
+                <div className="td-muted" style={{ marginBottom: 8 }}>{tape.artist_id ? <Link to={"/tapedeck/artist/" + tape.artist_id} style={{ color: "#b7c2d3", textDecoration: "none" }}>{artistName}</Link> : artistName}</div>
                 {description && <p style={{ color: '#9ba7b8', fontSize: 12, lineHeight: 1.5, margin: '0 0 10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>}
                 {tape.audio_url ? <audio controls preload="none" src={tape.audio_url} style={{ width: '100%', height: 34 }} aria-label={'Play ' + tape.title}>Audio playback not supported.</audio> : <span className="td-muted">Audio preview unavailable</span>}
               </article>;
