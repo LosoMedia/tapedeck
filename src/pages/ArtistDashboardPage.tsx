@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, BarChart3, ExternalLink, MessageSquareText, Music2, Star, UserRound } from 'lucide-react';
 import { supabase, type TapeRow, type TapeReviewRow } from '@/lib/supabase';
 
-const gold = '#d8b45a';
+const gold = '#ff3b5c';
 const panel: React.CSSProperties = { background: '#191919', border: '1px solid #303030', borderRadius: 16, padding: 20 };
 const muted: React.CSSProperties = { color: '#9ba7b8', fontSize: 13, lineHeight: 1.6 };
 const button: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, background: '#202020', color: '#e2e8f0', border: '1px solid #383838', borderRadius: 10, padding: '10px 13px', textDecoration: 'none', fontWeight: 750 };
@@ -63,7 +63,7 @@ export function ArtistDashboardPage() {
         {error && <p role="alert" style={{ background: '#351a22', color: '#fecaca', padding: 12, borderRadius: 10, overflowWrap: 'anywhere' }}>{error}</p>}
         <section style={{ ...panel, marginTop: 8, marginBottom: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 18 }}>
           <div><div style={{ color: gold, fontSize: 10, fontWeight: 900, letterSpacing: 2.5 }}>ARTIST WORKSPACE</div><h1 style={{ fontSize: 'clamp(28px,4vw,40px)', margin: '8px 0' }}>Welcome back, {profileName}</h1><p style={{ ...muted, margin: 0 }}>Your tracks, community feedback, and artist profile in one place.</p></div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9 }}><Link to="/tapedeck/profile" style={{ ...button, background: gold, color: '#111111', borderColor: '#b89b50' }}><UserRound size={16} /> Edit profile</Link><Link to="/tapedeck" style={button}><Music2 size={16} /> Discover music</Link></div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9 }}><Link to="/tapedeck/profile" style={{ ...button, background: gold, color: '#111111', borderColor: '#c92749' }}><UserRound size={16} /> Edit profile</Link><Link to="/tapedeck" style={button}><Music2 size={16} /> Discover music</Link></div>
         </section>
         <section className="dash-grid" style={{ marginBottom: 22 }}>
           <div style={panel}><Music2 color={gold} size={21} /><div style={{ fontSize: 29, fontWeight: 900, marginTop: 8 }}>{tracks.length}</div><div style={muted}>Your tracks</div></div>
