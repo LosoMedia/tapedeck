@@ -244,15 +244,15 @@ export function ReviewerPage() {
       <header className="sticky top-0 z-50 bg-ink-950/90 backdrop-blur-md border-b border-ink-700/50">
         <nav className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="relative w-9 h-9 rounded-full bg-ink-800 border border-gold-500/40 flex items-center justify-center">
-              <Disc3 className="w-5 h-5 text-gold-500 animate-spin-slow" />
+            <div className="relative w-9 h-9 rounded-full bg-ink-800 border border-[#ff3b5c]/40 flex items-center justify-center">
+              <Disc3 className="w-5 h-5 text-[#ff3b5c] animate-spin-slow" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-display text-xl text-cream-50 tracking-wider">TAPE DECK</span>
-              <span className="font-mono text-[8px] text-gold-500/70 uppercase tracking-[0.25em]">Reviewer Console</span>
+              <span className="font-mono text-[8px] text-[#ff91a6]/70 uppercase tracking-[0.25em]">Reviewer Console</span>
             </div>
           </div>
-          <a href="/tapedeck" className="font-heading text-sm text-cream-200/80 hover:text-gold-400 transition-colors">Back to Tape Deck</a>
+          <a href="/tapedeck" className="font-heading text-sm text-cream-200/80 hover:text-[#ff91a6] transition-colors">Back to Tape Deck</a>
         </nav>
       </header>
 
@@ -268,23 +268,23 @@ export function ReviewerPage() {
 
         <div className="flex flex-wrap gap-2 mb-8">
           {reviewSteps.map((step, index) => (
-            <span key={step.title} className={`px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-wider border ${index === 0 ? 'text-gold-400 bg-gold-500/10 border-gold-500/30' : 'text-cream-300/50 bg-ink-800/50 border-ink-600/40'}`}>
+            <span key={step.title} className={`px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-wider border ${index === 0 ? 'text-[#ff91a6] bg-[#ff3b5c]/10 border-[#ff3b5c]/30' : 'text-cream-300/50 bg-ink-800/50 border-ink-600/40'}`}>
               {index + 1}. {step.title}
             </span>
           ))}
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-gold-500/50 animate-spin" /></div>
+          <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 text-[#ff91a6]/50 animate-spin" /></div>
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
             <div className="space-y-3">
-              <div className="font-mono text-xs uppercase tracking-widest text-gold-500/60 mb-2">Tapes to Review ({tapes.length})</div>
+              <div className="font-mono text-xs uppercase tracking-widest text-[#ff91a6]/60 mb-2">Tapes to Review ({tapes.length})</div>
               {tapes.map((tape) => {
                 const cls = classConfig[tape.classification];
                 const isActive = selectedTape?.id === tape.id;
                 return (
-                  <div key={tape.id} onClick={() => handleTapeClick(tape)} className={`panel panel-hover p-4 cursor-pointer transition-all ${isActive ? 'border-gold-500/50' : ''}`}>
+                  <div key={tape.id} onClick={() => handleTapeClick(tape)} className={`panel panel-hover p-4 cursor-pointer transition-all ${isActive ? 'border-[#ff3b5c]/50' : ''}`}>
                     <div className="flex items-center gap-4">
                       <img src={tape.cover_url} alt={tape.title} className="w-16 h-16 rounded-md object-cover flex-shrink-0" />
                       <div className="flex-1 min-w-0">
@@ -304,7 +304,7 @@ export function ReviewerPage() {
             <div className="lg:sticky lg:top-24 lg:self-start">
               {!selectedTape ? (
                 <div className="panel p-10 text-center">
-                  <PenSquare className="w-12 h-12 text-gold-500/20 mx-auto mb-4" />
+                  <PenSquare className="w-12 h-12 text-[#ff91a6]/20 mx-auto mb-4" />
                   <p className="text-cream-300/40">Select a Tape from the list to listen and review it.</p>
                 </div>
               ) : (
@@ -326,7 +326,7 @@ export function ReviewerPage() {
                     <button onClick={() => openReviewForm(selectedTape)} className="btn-primary w-full justify-center"><PenSquare className="w-4 h-4" />Write a Review</button>
 
                     <div>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-gold-500/60 mb-3">Existing Reviews ({reviewsByTape[selectedTape.id]?.length ?? 0})</div>
+                      <div className="font-mono text-[10px] uppercase tracking-widest text-[#ff91a6]/60 mb-3">Existing Reviews ({reviewsByTape[selectedTape.id]?.length ?? 0})</div>
                       {!reviewsByTape[selectedTape.id] ? (
                         <div className="text-sm text-cream-300/40 py-2">Loading reviews...</div>
                       ) : reviewsByTape[selectedTape.id].length === 0 ? (
@@ -337,7 +337,7 @@ export function ReviewerPage() {
                             <div key={review.id} className="bg-ink-900/40 border border-ink-600/30 rounded-lg p-4">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-ink-600 to-ink-800 border border-ink-500/50 flex items-center justify-center"><span className="font-display text-sm text-gold-400">{review.reviewer_name.charAt(0)}</span></div>
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-ink-600 to-ink-800 border border-ink-500/50 flex items-center justify-center"><span className="font-display text-sm text-[#ff91a6]">{review.reviewer_name.charAt(0)}</span></div>
                                   <div><div className="text-sm text-cream-50">{review.reviewer_name}</div><div className="font-mono text-[9px] text-cream-300/40">{review.reviewer_role}</div></div>
                                 </div>
                                 <StarRating rating={review.rating} />
@@ -361,13 +361,13 @@ export function ReviewerPage() {
           <div className="relative w-full max-w-2xl my-8 panel grain overflow-hidden animate-fade-up" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-5 border-b border-ink-600/40">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gold-500/10 border border-gold-500/30 flex items-center justify-center"><PenSquare className="w-5 h-5 text-gold-400" /></div>
+                <div className="w-10 h-10 rounded-lg bg-[#ff3b5c]/10 border border-[#ff3b5c]/30 flex items-center justify-center"><PenSquare className="w-5 h-5 text-[#ff91a6]" /></div>
                 <div>
                   <h2 className="font-display text-2xl text-cream-50">VETTED REVIEW</h2>
                   <p className="font-mono text-[10px] uppercase tracking-wider text-cream-300/40">"{reviewingTape.title}" by {reviewingTape.artist}</p>
                 </div>
               </div>
-              <button onClick={() => !submitting && setReviewingTape(null)} className="w-9 h-9 rounded-full bg-ink-800/80 border border-ink-600/50 flex items-center justify-center text-cream-300/60 hover:text-gold-400 transition-colors"><X className="w-4 h-4" /></button>
+              <button onClick={() => !submitting && setReviewingTape(null)} className="w-9 h-9 rounded-full bg-ink-800/80 border border-ink-600/50 flex items-center justify-center text-cream-300/60 hover:text-[#ff91a6] transition-colors"><X className="w-4 h-4" /></button>
             </div>
 
             {success ? (
@@ -380,14 +380,14 @@ export function ReviewerPage() {
               <div className="p-5">
                 <div className="flex items-center justify-between mb-5">
                   <div>
-                    <div className="font-mono text-[10px] uppercase tracking-widest text-gold-500/70">Step {stepIndex + 1} of {reviewSteps.length}</div>
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-[#ff91a6]/70">Step {stepIndex + 1} of {reviewSteps.length}</div>
                     <h3 className="font-display text-3xl text-cream-50 mt-1">{reviewSteps[stepIndex].title}</h3>
                   </div>
                   <button onClick={saveDraft} className="btn-ghost text-xs"><Save className="w-4 h-4" />{draftSaved ? 'Draft Saved' : 'Save Draft'}</button>
                 </div>
 
                 <div className="w-full h-1.5 bg-ink-800 rounded-full mb-6 overflow-hidden">
-                  <div className="h-full bg-gold-500 transition-all" style={{ width: `${((stepIndex + 1) / reviewSteps.length) * 100}%` }} />
+                  <div className="h-full bg-[#ff3b5c] transition-all" style={{ width: `${((stepIndex + 1) / reviewSteps.length) * 100}%` }} />
                 </div>
 
                 <div className="space-y-5">
@@ -403,7 +403,7 @@ export function ReviewerPage() {
                           onChange={(e) => updateAnswer(index, e.target.value)}
                           rows={4}
                           placeholder="Give specific, useful feedback. Generic praise does not help the artist improve."
-                          className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-gold-500/50 focus:outline-none transition-colors resize-none"
+                          className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-[#ff3b5c]/50 focus:outline-none transition-colors resize-none"
                         />
                       </div>
                     );
@@ -414,11 +414,11 @@ export function ReviewerPage() {
                   <div className="grid sm:grid-cols-2 gap-4 mt-6 pt-5 border-t border-ink-700/40">
                     <div>
                       <label className="font-mono text-[10px] uppercase tracking-wider text-cream-300/50 mb-1.5 block">Your Name *</label>
-                      <input value={reviewerName} onChange={(e) => setReviewerName(e.target.value)} placeholder="Your name" className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-gold-500/50 focus:outline-none transition-colors" />
+                      <input value={reviewerName} onChange={(e) => setReviewerName(e.target.value)} placeholder="Your name" className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-[#ff3b5c]/50 focus:outline-none transition-colors" />
                     </div>
                     <div>
                       <label className="font-mono text-[10px] uppercase tracking-wider text-cream-300/50 mb-1.5 block">Your Role</label>
-                      <input value={reviewerRole} onChange={(e) => setReviewerRole(e.target.value)} placeholder="e.g. Producer · 10 years" className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-gold-500/50 focus:outline-none transition-colors" />
+                      <input value={reviewerRole} onChange={(e) => setReviewerRole(e.target.value)} placeholder="e.g. Producer · 10 years" className="w-full bg-ink-900/60 border border-ink-600/40 rounded-md px-3 py-2.5 text-sm text-cream-100 placeholder:text-cream-300/30 focus:border-[#ff3b5c]/50 focus:outline-none transition-colors" />
                     </div>
                   </div>
                 )}
@@ -429,7 +429,7 @@ export function ReviewerPage() {
                     <div className="flex items-center gap-2">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <button key={i} onClick={() => setRating(i)} className="transition-transform hover:scale-110">
-                          <Star className={`w-7 h-7 ${i <= rating ? 'text-gold-500 fill-current' : 'text-ink-500'}`} />
+                          <Star className={`w-7 h-7 ${i <= rating ? 'text-[#ff3b5c] fill-current' : 'text-ink-500'}`} />
                         </button>
                       ))}
                       <span className="ml-2 font-mono text-sm text-cream-300/70">{rating.toFixed(1)}</span>
