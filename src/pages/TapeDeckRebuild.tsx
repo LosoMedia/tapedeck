@@ -167,7 +167,7 @@ export function TapeDeckRebuild() {
             <span className="td-logo">TAPE DECK<span style={{ color: gold }}>.</span><small style={{ display: 'block', color: '#738095', fontSize: 9, letterSpacing: 2, marginTop: 2 }}>BY LOSOMEDIA</small></span>
           </Link>
           <nav className="td-nav-links" style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
-            <a className="td-link" href="#discover">Discover</a><a className="td-link" href="#community">Community</a><a className="td-link" href="#upload">Upload music</a>
+            <a className="td-link" href="#discover">Discover</a><a className="td-link" href="#community">Community</a><a className="td-link" href="#upload">Upload music</a><Link className="td-link" to="/tapedeck/queue">Review Queue</Link>
           </nav>
           <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
             {sessionUser ? <><Link to="/tapedeck/profile" className="td-link" style={{ color: gold }}>My Profile</Link><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#202020', color: '#e2e8f0', borderColor: '#383838', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
