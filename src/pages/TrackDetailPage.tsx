@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Disc3, Music2, Star, UserRound } from 'lucide-react';
 import { supabase, type TapeRow, type TapeReviewRow } from '@/lib/supabase';
 
-const gold = '#d8b45a';
+const gold = '#ff3b5c';
 const panel: React.CSSProperties = { background: '#191919', border: '1px solid #303030', borderRadius: 18, padding: 22 };
 
 const reviewStages = [
@@ -163,7 +163,7 @@ export function TrackDetailPage() {
   }
 
   return <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', paddingBottom: 48 }}>
-    <style>{`*{box-sizing:border-box}body{margin:0}.track-wrap{width:min(900px,calc(100% - 32px));margin:0 auto}.track-muted{color:#9ba7b8;font-size:13px;line-height:1.7}.track-link{color:#d8b45a;text-decoration:none}.track-button{display:inline-flex;align-items:center;gap:8px;border:1px solid #b89b50;border-radius:10px;padding:10px 14px;background:#d8b45a;color:#111111;text-decoration:none;font-weight:800}.review-field{width:100%;resize:vertical;background:#101010;border:1px solid #383838;border-radius:10px;padding:12px;color:#f4f5f7;font:inherit;line-height:1.55}.review-field:focus{outline:1px solid #d8b45a;border-color:#d8b45a}.review-small{font-size:12px;color:#9ba7b8;line-height:1.6}`}</style>
+    <style>{`*{box-sizing:border-box}body{margin:0}.track-wrap{width:min(900px,calc(100% - 32px));margin:0 auto}.track-muted{color:#9ba7b8;font-size:13px;line-height:1.7}.track-link{color:#ff3b5c;text-decoration:none}.track-button{display:inline-flex;align-items:center;gap:8px;border:1px solid #c92749;border-radius:10px;padding:10px 14px;background:#ff3b5c;color:#111111;text-decoration:none;font-weight:800}.review-field{width:100%;resize:vertical;background:#101010;border:1px solid #383838;border-radius:10px;padding:12px;color:#f4f5f7;font:inherit;line-height:1.55}.review-field:focus{outline:1px solid #ff3b5c;border-color:#ff3b5c}.review-small{font-size:12px;color:#9ba7b8;line-height:1.6}`}</style>
     <header style={{ borderBottom: '1px solid #2b2b2b', padding: 18 }}>
       <div className="track-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap' }}>
         <Link to="/tapedeck" style={{ color: '#f4f5f7', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 9 }}><Disc3 color={gold} size={24} /> <strong>TAPE DECK<span style={{ color: gold }}>.</span></strong></Link>
@@ -173,7 +173,7 @@ export function TrackDetailPage() {
     <main className="track-wrap" style={{ paddingTop: 30 }}>
       {busy ? <p className="track-muted">Loading track…</p> : error ? <div role="alert" style={{ ...panel, color: '#fecaca' }}>{error}<p><Link className="track-link" to="/tapedeck">Return to Tape Deck</Link></p></div> : track && <>
         <section style={{ ...panel, display: 'grid', gridTemplateColumns: 'minmax(0,300px) minmax(0,1fr)', gap: 26, alignItems: 'center' }}>
-          <div style={{ aspectRatio: '1 / 1', borderRadius: 14, overflow: 'hidden', background: 'radial-gradient(circle at 70% 25%,#d8b45a66,transparent 28%),linear-gradient(145deg,#2a2a2a,#191919 65%,#080808)', border: '1px solid #383838', display: 'grid', placeItems: 'center' }}>
+          <div style={{ aspectRatio: '1 / 1', borderRadius: 14, overflow: 'hidden', background: 'radial-gradient(circle at 70% 25%,#ff3b5c66,transparent 28%),linear-gradient(145deg,#2a2a2a,#191919 65%,#080808)', border: '1px solid #383838', display: 'grid', placeItems: 'center' }}>
             {track.cover_url ? <img src={track.cover_url} alt={track.title + ' cover'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ textAlign: 'center', color: gold }}><Music2 size={52} /><div style={{ fontSize: 11, letterSpacing: 3, marginTop: 12, fontWeight: 900 }}>TAPE DECK</div></div>}
           </div>
           <div>
@@ -241,7 +241,7 @@ export function TrackDetailPage() {
         {reviewError && <p role="alert" style={{ color: '#fecaca', background: '#351a22', padding: 11, borderRadius: 9, fontSize: 13, marginTop: 16 }}>{reviewError}</p>}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginTop: 22, paddingTop: 16, borderTop: '1px solid #303030' }}>
           <button disabled={reviewBusy} onClick={() => { setReviewError(''); if (stageIndex === 0) setReviewOpen(false); else setStageIndex((index) => index - 1); }} style={{ background: '#202020', border: '1px solid #383838', color: '#e2e8f0', padding: '10px 14px', borderRadius: 9, cursor: 'pointer' }}>{stageIndex === 0 ? 'Cancel' : 'Back'}</button>
-          {stageIndex < reviewStages.length - 1 ? <button onClick={() => { const complete = currentStage.questions.every((_, index) => answers[currentStage.title][index].trim().length >= 15); if (!complete) setReviewError('Answer all three questions with at least 15 characters each before moving on.'); else { setReviewError(''); setStageIndex((index) => index + 1); } }} style={{ background: gold, border: '1px solid #b89b50', color: '#111111', fontWeight: 850, padding: '10px 15px', borderRadius: 9, cursor: 'pointer' }}>Next stage →</button> : <button disabled={reviewBusy} onClick={() => void submitReview()} style={{ background: gold, border: '1px solid #b89b50', color: '#111111', fontWeight: 850, padding: '10px 15px', borderRadius: 9, cursor: reviewBusy ? 'wait' : 'pointer', opacity: reviewBusy ? .65 : 1 }}>{reviewBusy ? 'Publishing…' : 'Publish review'}</button>}
+          {stageIndex < reviewStages.length - 1 ? <button onClick={() => { const complete = currentStage.questions.every((_, index) => answers[currentStage.title][index].trim().length >= 15); if (!complete) setReviewError('Answer all three questions with at least 15 characters each before moving on.'); else { setReviewError(''); setStageIndex((index) => index + 1); } }} style={{ background: gold, border: '1px solid #c92749', color: '#111111', fontWeight: 850, padding: '10px 15px', borderRadius: 9, cursor: 'pointer' }}>Next stage →</button> : <button disabled={reviewBusy} onClick={() => void submitReview()} style={{ background: gold, border: '1px solid #c92749', color: '#111111', fontWeight: 850, padding: '10px 15px', borderRadius: 9, cursor: reviewBusy ? 'wait' : 'pointer', opacity: reviewBusy ? .65 : 1 }}>{reviewBusy ? 'Publishing…' : 'Publish review'}</button>}
         </div>
         <p className="review-small" style={{ marginTop: 13 }}>Completed stages: {completedCount}/{reviewStages.length}. All 15 answers are required before publishing.</p>
       </div>
