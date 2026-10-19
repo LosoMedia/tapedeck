@@ -83,13 +83,23 @@ export function TapeDeckRebuild() {
       });
       if (storageError) throw new Error('Audio upload failed: ' + storageError.message);
       const { data: urlData } = supabase.storage.from('tape-audio').getPublicUrl(uploadedPath);
-      // Keep this insert to the core columns confirmed by the current database.
-      // Artist display metadata can be expanded after the database migration is applied.
       const { error: saveError } = await supabase.from('tapes').insert({
-        title: title.trim(),
         artist_id: sessionUser.id,
+        title: title.trim(),
+        artist: artist.trim() || sessionUser.email?.split('@')[0] || 'Independent artist',
+        classification,
+        genre: genre.trim(),
+        mood: '',
+        bpm: 120,
+        musical_key: '',
+        duration: '0:00',
         audio_url: urlData.publicUrl,
-        description: [artist.trim() ? 'Artist: ' + artist.trim() : '', 'Type: ' + classification, genre ? 'Genre: ' + genre : '', description.trim()].filter(Boolean).join('\n')
+        cover_url: '',
+        description: description.trim(),
+        skills_needed: [],
+        collaboration_status: 'open',
+        rating: 0,
+        plays: '0'
       });
       if (saveError) throw new Error('Audio uploaded, but the track record was not saved: ' + saveError.message);
       setTitle(''); setArtist(''); setGenre('Hip-hop'); setDescription(''); setAudioFile(null);
