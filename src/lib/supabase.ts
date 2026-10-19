@@ -7,6 +7,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export interface TapeRow {
   id: string;
+  artist_id?: string | null;
   title: string;
   artist: string;
   classification: 'ai' | 'organic' | 'hybrid';
