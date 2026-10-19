@@ -3,21 +3,21 @@ import { Link } from 'react-router-dom';
 import { Headphones, Search, UploadCloud, Music2, Sparkles, Users, Radio, Disc3, LogOut, ArrowUpRight, Play, RefreshCw } from 'lucide-react';
 import { supabase, type TapeRow } from '@/lib/supabase';
 
-const gold = '#d8b45a';
+const gold = '#ff3b5c';
 const panel: React.CSSProperties = { background: '#191919', border: '1px solid #303030', borderRadius: 16 };
 const field: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '12px 14px', border: '1px solid #383838', borderRadius: 10, background: '#101010', color: '#f4f5f7', fontSize: 15 };
 const label: React.CSSProperties = { display: 'block', color: '#c5cedb', fontSize: 13, fontWeight: 700, marginTop: 14 };
-const button: React.CSSProperties = { border: '1px solid #b89b50', borderRadius: 10, padding: '11px 15px', background: gold, color: '#111111', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' };
+const button: React.CSSProperties = { border: '1px solid #c92749', borderRadius: 10, padding: '11px 15px', background: gold, color: '#111111', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' };
 
 const genres = ['All music', 'Hip-hop', 'R&B', 'Pop', 'Electronic', 'Rock', 'Experimental'];
 
 function coverStyle(index: number): React.CSSProperties {
   const covers = [
-    'radial-gradient(circle at 75% 22%,#f5d68b 0,transparent 24%),linear-gradient(140deg,#7c2d46,#202020 65%,#080808)',
-    'radial-gradient(circle at 25% 70%,#d8b45a 0,transparent 28%),linear-gradient(145deg,#292929,#191919 58%,#292929)',
-    'radial-gradient(circle at 68% 35%,#d8b45a 0,transparent 25%),linear-gradient(135deg,#2d2d2d,#1b1b1b 58%,#080808)',
-    'radial-gradient(circle at 40% 25%,#e2d4b0 0,transparent 18%),linear-gradient(145deg,#303030,#181818 60%,#080808)',
-    'radial-gradient(circle at 72% 70%,#d8b45a 0,transparent 30%),linear-gradient(145deg,#33213d,#181818 60%,#080808)',
+    'radial-gradient(circle at 75% 22%,#ff91a6 0,transparent 24%),linear-gradient(140deg,#7c2d46,#202020 65%,#080808)',
+    'radial-gradient(circle at 25% 70%,#ff3b5c 0,transparent 28%),linear-gradient(145deg,#292929,#191919 58%,#292929)',
+    'radial-gradient(circle at 68% 35%,#ff3b5c 0,transparent 25%),linear-gradient(135deg,#2d2d2d,#1b1b1b 58%,#080808)',
+    'radial-gradient(circle at 40% 25%,#ffc0cb 0,transparent 18%),linear-gradient(145deg,#303030,#181818 60%,#080808)',
+    'radial-gradient(circle at 72% 70%,#ff3b5c 0,transparent 30%),linear-gradient(145deg,#33213d,#181818 60%,#080808)',
   ];
   return { background: covers[index % covers.length] };
 }
@@ -131,22 +131,22 @@ export function TapeDeckRebuild() {
         .td-hero { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr); gap:28px; align-items:center; padding:44px 0 36px; }
         .td-hero-title { font-size:clamp(36px,5.4vw,64px); line-height:.98; letter-spacing:-2px; margin:14px 0 18px; font-weight:950; max-width:720px; }
         .td-hero-copy { color:#a3adbd; line-height:1.7; font-size:16px; max-width:560px; }
-        .td-feature { min-height:260px; border-radius:22px; border:1px solid #383838; background:radial-gradient(circle at 70% 20%,#6e5c2f55,transparent 30%),linear-gradient(145deg,#252525,#101010 68%); padding:25px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; }
-        .td-feature:after { content:''; position:absolute; width:190px; height:190px; right:-35px; bottom:-45px; border:1px solid #d8b45a66; border-radius:50%; box-shadow:0 0 0 18px #d8b45a0b,0 0 0 38px #d8b45a08; }
+        .td-feature { min-height:260px; border-radius:22px; border:1px solid #383838; background:radial-gradient(circle at 70% 20%,#ff3b5c55,transparent 30%),linear-gradient(145deg,#252525,#101010 68%); padding:25px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; }
+        .td-feature:after { content:''; position:absolute; width:190px; height:190px; right:-35px; bottom:-45px; border:1px solid #ff3b5c66; border-radius:50%; box-shadow:0 0 0 18px #ff3b5c0b,0 0 0 38px #ff3b5c08; }
         .td-chip { display:inline-flex; align-items:center; gap:7px; border:1px solid #383838; background:#181818; color:#d4dbe5; border-radius:999px; padding:7px 10px; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:800; }
         .td-section-head { display:flex; align-items:end; justify-content:space-between; gap:16px; margin:12px 0 18px; }
         .td-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
         .td-card { min-width:0; background:#191919; border:1px solid #303030; border-radius:15px; padding:11px; transition:transform .18s,border-color .18s; }
-        .td-card:hover { transform:translateY(-3px); border-color:#6b634b; }
+        .td-card:hover { transform:translateY(-3px); border-color:#63303b; }
         .td-cover { aspect-ratio:1/1; border-radius:10px; display:flex; align-items:end; padding:12px; overflow:hidden; }
         .td-cover-mark { font-size:11px; letter-spacing:2px; font-weight:900; color:#ffffffc9; text-shadow:0 2px 12px #000; }
         .td-track-title { font-size:15px; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:12px 0 5px; }
         .td-muted { color:#8995a7; font-size:12px; }
         .td-search { position:relative; width:min(330px,100%); }
         .td-search input { width:100%; background:#151515; border:1px solid #333333; border-radius:10px; padding:12px 12px 12px 38px; color:#f4f5f7; outline:none; }
-        .td-search input:focus { border-color:#a88d4d; }
+        .td-search input:focus { border-color:#c92749; }
         .td-genre { border:1px solid #333333; background:#151515; color:#aeb8c8; padding:9px 13px; border-radius:999px; font-size:13px; cursor:pointer; }
-        .td-genre.active { color:#f4f5f7; border-color:#a88d4d; background:#d8b45a18; }
+        .td-genre.active { color:#f4f5f7; border-color:#c92749; background:#ff3b5c18; }
         .td-bottom { border-top:1px solid #2b2b2b; margin-top:54px; padding:25px 0 32px; color:#758195; font-size:12px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
         @media(max-width:800px) { .td-hero { grid-template-columns:1fr; padding-top:30px; } .td-feature { min-height:200px; } .td-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .td-section-head { align-items:stretch; flex-direction:column; } .td-search { width:100%; } }
         @media(max-width:430px) { .td-wrap { width:calc(100% - 24px); } .td-nav { align-items:flex-start; } .td-nav-links { display:none !important; } .td-hero-title { letter-spacing:-1px; } .td-grid { gap:10px; } }
@@ -155,7 +155,7 @@ export function TapeDeckRebuild() {
       <header style={{ borderBottom: '1px solid #2b2b2b', background: '#0b1019eF', position: 'sticky', top: 0, zIndex: 5, backdropFilter: 'blur(14px)' }}>
         <div className="td-wrap td-nav">
           <Link to="/tapedeck" style={{ color: '#f4f5f7', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ width: 35, height: 35, border: '1px solid #a88d4d', borderRadius: 10, display: 'grid', placeItems: 'center', color: gold }}><Disc3 size={21} /></span>
+            <span style={{ width: 35, height: 35, border: '1px solid #c92749', borderRadius: 10, display: 'grid', placeItems: 'center', color: gold }}><Disc3 size={21} /></span>
             <span className="td-logo">TAPE DECK<span style={{ color: gold }}>.</span><small style={{ display: 'block', color: '#738095', fontSize: 9, letterSpacing: 2, marginTop: 2 }}>BY LOSOMEDIA</small></span>
           </Link>
           <nav className="td-nav-links" style={{ display: 'flex', gap: 22, alignItems: 'center' }}>
@@ -255,7 +255,7 @@ export function TapeDeckRebuild() {
             <label style={label}>Genre<select style={field} value={genre} onChange={e => setGenre(e.target.value)}>{genres.filter(g => g !== 'All music').map(g => <option key={g} value={g}>{g}</option>)}<option value="Other">Other</option></select></label>
           </div>
           <label style={label}>About this track<textarea style={{ ...field, minHeight: 82, resize: 'vertical' }} value={description} onChange={e => setDescription(e.target.value)} placeholder="What should listeners know?" /></label>
-          {!sessionUser && <p style={{ color: '#e9d29a', fontSize: 13, lineHeight: 1.5 }}>You need an account before publishing. <Link to="/tapedeck/auth" style={{ color: gold }}>Sign in or join here.</Link></p>}
+          {!sessionUser && <p style={{ color: '#ff91a6', fontSize: 13, lineHeight: 1.5 }}>You need an account before publishing. <Link to="/tapedeck/auth" style={{ color: gold }}>Sign in or join here.</Link></p>}
           {error && <p role="alert" style={{ color: '#fecaca', background: '#351a22', border: '1px solid #6e303b', padding: 11, borderRadius: 9, overflowWrap: 'anywhere', fontSize: 13 }}>{error}</p>}
           <div style={{ display: 'flex', gap: 10, marginTop: 20 }}><button type="button" onClick={() => setShowUpload(false)} style={{ ...button, flex: 1, background: '#202020', color: '#d7deea', borderColor: '#383838' }}>Cancel</button><button type="submit" disabled={busy || !sessionUser} style={{ ...button, flex: 1, opacity: busy || !sessionUser ? .55 : 1 }}>{busy ? 'UPLOADING…' : <><Play size={15} /> Publish Tape</>}</button></div>
         </form>
