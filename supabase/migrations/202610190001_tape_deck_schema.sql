@@ -22,11 +22,7 @@ alter table public.tapes
   add column if not exists plays text not null default '0',
   add column if not exists created_at timestamptz not null default now();
 
--- Backfill ownership for older rows when possible, then require ownership for new rows.
--- Rows that cannot be mapped are intentionally left alone so the migration doesn't destroy old content.
-update public.tapes
-set artist_id = auth.uid()
-where artist_id is null and false;
+-- Existing rows with no owner remain readable but cannot be edited by a member until an owner is assigned.
 
 create index if not exists tapes_created_at_idx on public.tapes (created_at desc);
 create index if not exists tapes_artist_id_idx on public.tapes (artist_id);
