@@ -4,6 +4,7 @@ import { TapeDeckRebuild } from '@/pages/TapeDeckRebuild';
 import { ReviewerPage } from '@/pages/ReviewerPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { ArtistProfilePage } from '@/pages/ArtistProfilePage';
+import { ArtistDashboardPage } from '@/pages/ArtistDashboardPage';
 import { TrackDetailPage } from '@/pages/TrackDetailPage';
 import { supabase } from '@/lib/supabase';
 
@@ -22,6 +23,7 @@ function App() {
     <Route path="/tapedeck" element={<TapeDeckRebuild />} />
     <Route path="/tapedeck/auth" element={<AuthPage />} />
     <Route path="/tapedeck/profile" element={<ArtistProfilePage />} />
+    <Route path="/tapedeck/dashboard" element={<ArtistDashboardPage />} />
     <Route path="/tapedeck/artist/:artistId" element={<ArtistProfilePage />} />
     <Route path="/tapedeck/track/:trackId" element={<TrackDetailPage />} />
     <Route path="/tapedeck/reviewer" element={<ProtectedReviewer />} />
