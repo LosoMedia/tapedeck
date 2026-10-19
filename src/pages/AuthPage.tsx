@@ -2,6 +2,8 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
+const TAPE_DECK_ORIGIN = 'https://tapedeck-git-rebuild-tapedeck-clean-loso-media.vercel.app';
+
 const field: React.CSSProperties = {
   display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7,
   padding: '13px 14px', borderRadius: 10, border: '1px solid #475569',
@@ -39,7 +41,7 @@ export function AuthPage() {
           email: email.trim(), password,
           options: {
             data: { display_name: name.trim() },
-            emailRedirectTo: window.location.origin + '/tapedeck/auth',
+            emailRedirectTo: TAPE_DECK_ORIGIN + '/tapedeck/auth',
           },
         });
         if (authError) setError(authError.message);
@@ -47,7 +49,7 @@ export function AuthPage() {
       } else {
         const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (authError) setError(authError.message);
-        else navigate('/tapedeck', { replace: true });
+        else window.location.assign(TAPE_DECK_ORIGIN + '/tapedeck');
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Sign-in failed. Please try again.');
@@ -59,7 +61,7 @@ export function AuthPage() {
     try {
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/tapedeck' },
+        options: { redirectTo: TAPE_DECK_ORIGIN + '/tapedeck' },
       });
       if (authError) { setError(authError.message); setBusy(false); }
     } catch (cause) {
