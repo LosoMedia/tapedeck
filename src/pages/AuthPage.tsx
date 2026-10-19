@@ -2,16 +2,15 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-const TAPE_DECK_ORIGIN = 'https://tapedeck-git-rebuild-tapedeck-clean-loso-media.vercel.app';
-
+const currentSite = window.location.origin;
 const field: React.CSSProperties = {
   display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7,
-  padding: '13px 14px', borderRadius: 10, border: '1px solid #475569',
-  background: '#020617', color: '#f8fafc', fontSize: 16
+  padding: '13px 14px', borderRadius: 10, border: '1px solid #344154',
+  background: '#0b1220', color: '#f8fafc', fontSize: 16
 };
 const primary: React.CSSProperties = {
-  width: '100%', border: 0, borderRadius: 10, padding: '14px 16px',
-  background: '#f5c451', color: '#111827', fontWeight: 900, fontSize: 15, cursor: 'pointer'
+  width: '100%', border: '1px solid #b89b50', borderRadius: 10, padding: '14px 16px',
+  background: '#d8b45a', color: '#10151f', fontWeight: 900, fontSize: 15, cursor: 'pointer'
 };
 
 export function AuthPage() {
@@ -41,7 +40,7 @@ export function AuthPage() {
           email: email.trim(), password,
           options: {
             data: { display_name: name.trim() },
-            emailRedirectTo: TAPE_DECK_ORIGIN + '/tapedeck/auth',
+            emailRedirectTo: currentSite + '/tapedeck/auth',
           },
         });
         if (authError) setError(authError.message);
@@ -49,7 +48,7 @@ export function AuthPage() {
       } else {
         const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (authError) setError(authError.message);
-        else window.location.assign(TAPE_DECK_ORIGIN + '/tapedeck');
+        else navigate('/tapedeck', { replace: true });
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Sign-in failed. Please try again.');
@@ -61,7 +60,7 @@ export function AuthPage() {
     try {
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: TAPE_DECK_ORIGIN + '/tapedeck' },
+        options: { redirectTo: currentSite + '/tapedeck' },
       });
       if (authError) { setError(authError.message); setBusy(false); }
     } catch (cause) {
@@ -71,18 +70,18 @@ export function AuthPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070b14', color: '#f8fafc', fontFamily: 'Inter, system-ui, sans-serif', padding: '28px 18px', boxSizing: 'border-box' }}>
+    <div style={{ minHeight: '100vh', background: '#090d14', color: '#f4f5f7', fontFamily: 'Inter, system-ui, sans-serif', padding: '28px 18px', boxSizing: 'border-box' }}>
       <div style={{ maxWidth: 470, margin: '0 auto' }}>
-        <Link to="/tapedeck" style={{ color: '#f5c451', textDecoration: 'none', fontWeight: 700 }}>← Back to Tape Deck</Link>
+        <Link to="/tapedeck" style={{ color: '#d8b45a', textDecoration: 'none', fontWeight: 700 }}>← Back to Tape Deck</Link>
         <header style={{ margin: '34px 0 24px' }}>
-          <div style={{ color: '#f5c451', fontSize: 12, fontWeight: 900, letterSpacing: 4 }}>LOSOMEDIA PRESENTS</div>
-          <h1 style={{ fontSize: 34, margin: '8px 0 5px', letterSpacing: 1 }}>TAPE DECK</h1>
-          <p style={{ color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>Member access for the new Tape Deck music platform.</p>
+          <div style={{ color: '#d8b45a', fontSize: 12, fontWeight: 900, letterSpacing: 3 }}>LOSOMEDIA / MUSIC COMMUNITY</div>
+          <h1 style={{ fontSize: 38, margin: '8px 0 5px', letterSpacing: 1, fontWeight: 900 }}>TAPE DECK<span style={{ color: '#d8b45a' }}>.</span></h1>
+          <p style={{ color: '#9ba7b8', margin: 0, lineHeight: 1.6 }}>One place for independent artists, AI creators, and the people who listen closely.</p>
         </header>
-        <section style={{ padding: 24, border: '1px solid #263244', borderRadius: 18, background: '#111827' }}>
+        <section style={{ padding: 24, border: '1px solid #293344', borderRadius: 18, background: '#111824', boxShadow: '0 24px 70px #0006' }}>
           <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
-            <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signin' ? '#f5c451' : '#1e293b', color: mode === 'signin' ? '#111827' : '#e2e8f0' }}>Sign In</button>
-            <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#f5c451' : '#1e293b', color: mode === 'signup' ? '#111827' : '#e2e8f0' }}>Create Account</button>
+            <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signin' ? '#d8b45a' : '#182131', borderColor: mode === 'signin' ? '#b89b50' : '#344154', color: mode === 'signin' ? '#10151f' : '#e2e8f0' }}>Sign In</button>
+            <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#d8b45a' : '#182131', borderColor: mode === 'signup' ? '#b89b50' : '#344154', color: mode === 'signup' ? '#10151f' : '#e2e8f0' }}>Create Account</button>
           </div>
           <form onSubmit={submit}>
             {mode === 'signup' && <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Display name<input value={name} onChange={e => setName(e.target.value)} placeholder="Artist or member name" style={field} /></label>}
@@ -91,11 +90,11 @@ export function AuthPage() {
             <button type="submit" disabled={busy} style={{ ...primary, opacity: busy ? .65 : 1 }}>{busy ? 'PLEASE WAIT…' : mode === 'signin' ? 'SIGN IN TO TAPE DECK' : 'CREATE TAPE DECK ACCOUNT'}</button>
           </form>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0', color: '#64748b', fontSize: 12 }}><span style={{ height: 1, flex: 1, background: '#334155' }} /> OR <span style={{ height: 1, flex: 1, background: '#334155' }} /></div>
-          <button type="button" onClick={google} disabled={busy} style={{ ...primary, background: '#1e293b', color: '#f8fafc', border: '1px solid #475569' }}>Continue with Google</button>
+          <button type="button" onClick={google} disabled={busy} style={{ ...primary, background: '#182131', color: '#f8fafc', border: '1px solid #344154' }}>Continue with Google</button>
           {message && <p role="status" style={{ color: '#86efac', background: '#052e16', padding: 12, borderRadius: 8, lineHeight: 1.5 }}>{message}</p>}
           {error && <p role="alert" style={{ color: '#fecaca', background: '#450a0a', padding: 12, borderRadius: 8, lineHeight: 1.5, overflowWrap: 'anywhere' }}>{error}</p>}
         </section>
-        <p style={{ color: '#64748b', fontSize: 12, marginTop: 18, lineHeight: 1.5 }}>You stay on this Tape Deck site during sign-in. After successful sign-in, you return to the new Tape Deck upload page.</p>
+        <p style={{ color: '#64748b', fontSize: 12, marginTop: 18, lineHeight: 1.5 }}>Sign-in returns to the same Tape Deck domain you opened. No hard-coded old-site redirect.</p>
       </div>
     </div>
   );
