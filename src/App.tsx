@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { TapeDeckRebuild } from '@/pages/TapeDeckRebuild';
 import { ReviewerPage } from '@/pages/ReviewerPage';
 import { AuthPage } from '@/pages/AuthPage';
+import { ArtistProfilePage } from '@/pages/ArtistProfilePage';
 import { supabase } from '@/lib/supabase';
 
 function ProtectedReviewer() {
@@ -19,6 +20,8 @@ function App() {
   return <BrowserRouter><Routes>
     <Route path="/tapedeck" element={<TapeDeckRebuild />} />
     <Route path="/tapedeck/auth" element={<AuthPage />} />
+    <Route path="/tapedeck/profile" element={<ArtistProfilePage />} />
+    <Route path="/tapedeck/artist/:artistId" element={<ArtistProfilePage />} />
     <Route path="/tapedeck/reviewer" element={<ProtectedReviewer />} />
     <Route path="*" element={<Navigate to="/tapedeck" replace />} />
   </Routes></BrowserRouter>;
