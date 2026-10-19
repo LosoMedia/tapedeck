@@ -21,7 +21,7 @@ const blankProfile = (id: string, name = ''): ArtistProfile => ({
 });
 const inputStyle: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '12px 13px', marginTop: 6, background: '#101010', color: '#f4f5f7', border: '1px solid #383838', borderRadius: 10, font: 'inherit' };
 const labelStyle: React.CSSProperties = { display: 'block', marginTop: 14, color: '#c5cedb', fontSize: 13, fontWeight: 700 };
-const gold = '#d8b45a';
+const gold = '#ff3b5c';
 
 export function ArtistProfilePage() {
   const { artistId } = useParams();
@@ -87,7 +87,7 @@ export function ArtistProfilePage() {
   ].filter((item) => item[1]) : [];
 
   return <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', paddingBottom: 50 }}>
-    <style>{`*{box-sizing:border-box}body{margin:0}.ap-wrap{width:min(900px,calc(100% - 32px));margin:0 auto}.ap-card{background:#191919;border:1px solid #303030;border-radius:16px;padding:22px}.ap-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:${gold};color:#111111;border:1px solid #b89b50;border-radius:10px;padding:11px 15px;font-weight:800;text-decoration:none;cursor:pointer}.ap-muted{color:#9ba7b8;font-size:13px;line-height:1.6}.ap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.ap-track{background:#141414;border:1px solid #303030;border-radius:12px;padding:14px}@media(max-width:520px){.ap-card{padding:16px}}`}</style>
+    <style>{`*{box-sizing:border-box}body{margin:0}.ap-wrap{width:min(900px,calc(100% - 32px));margin:0 auto}.ap-card{background:#191919;border:1px solid #303030;border-radius:16px;padding:22px}.ap-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:${gold};color:#111111;border:1px solid #c92749;border-radius:10px;padding:11px 15px;font-weight:800;text-decoration:none;cursor:pointer}.ap-muted{color:#9ba7b8;font-size:13px;line-height:1.6}.ap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.ap-track{background:#141414;border:1px solid #303030;border-radius:12px;padding:14px}@media(max-width:520px){.ap-card{padding:16px}}`}</style>
     <header style={{ borderBottom: '1px solid #2b2b2b', padding: '18px 0' }}><div className="ap-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
       <Link to="/tapedeck" style={{ color: '#f4f5f7', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8 }}><ArrowLeft size={17} /> Back to Tape Deck</Link>
       {userId && <span className="ap-muted">Signed in as {email}</span>}
