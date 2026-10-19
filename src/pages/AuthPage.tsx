@@ -1,7 +1,16 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Disc3, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+
+const field: React.CSSProperties = {
+  display: 'block', width: '100%', boxSizing: 'border-box', marginTop: 7,
+  padding: '13px 14px', borderRadius: 10, border: '1px solid #475569',
+  background: '#020617', color: '#f8fafc', fontSize: 16
+};
+const primary: React.CSSProperties = {
+  width: '100%', border: 0, borderRadius: 10, padding: '14px 16px',
+  background: '#f5c451', color: '#111827', fontWeight: 900, fontSize: 15, cursor: 'pointer'
+};
 
 export function AuthPage() {
   const navigate = useNavigate();
@@ -14,74 +23,77 @@ export function AuthPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let active = true;
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate('/tapedeck', { replace: true });
+      if (active && data.session) navigate('/tapedeck', { replace: true });
     });
+    return () => { active = false; };
   }, [navigate]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setBusy(true); setError(''); setMessage('');
-    if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({
-        email: email.trim(), password,
-        options: {
-          data: { display_name: name.trim() },
-          emailRedirectTo: window.location.origin + '/tapedeck/auth',
-        },
-      });
-      if (error) setError(error.message);
-      else setMessage('Account created. Check your email to confirm your account, then return here to sign in.');
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) setError(error.message);
-      else navigate('/tapedeck', { replace: true });
-    }
-    setBusy(false);
+    try {
+      if (mode === 'signup') {
+        const { error: authError } = await supabase.auth.signUp({
+          email: email.trim(), password,
+          options: {
+            data: { display_name: name.trim() },
+            emailRedirectTo: window.location.origin + '/tapedeck/auth',
+          },
+        });
+        if (authError) setError(authError.message);
+        else setMessage('Account created. Check your email to confirm it, then return to this Tape Deck sign-in page.');
+      } else {
+        const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (authError) setError(authError.message);
+        else navigate('/tapedeck', { replace: true });
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Sign-in failed. Please try again.');
+    } finally { setBusy(false); }
   };
 
   const google = async () => {
-    setBusy(true); setError('');
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + '/tapedeck' },
-    });
-    if (error) { setError(error.message); setBusy(false); }
+    setBusy(true); setError(''); setMessage('');
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/tapedeck' },
+      });
+      if (authError) { setError(authError.message); setBusy(false); }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Google sign-in failed.');
+      setBusy(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-ink-950 text-cream-100 flex items-center justify-center px-5 py-12 grain">
-      <div className="w-full max-w-md">
-        <Link to="/tapedeck" className="inline-flex items-center gap-2 text-cream-300/60 hover:text-gold-400 text-sm mb-8">
-          <ArrowLeft className="w-4 h-4" /> Back to Tape Deck
-        </Link>
-        <div className="panel p-7 sm:p-9">
-          <div className="flex items-center gap-3 mb-7">
-            <div className="w-11 h-11 rounded-full bg-ink-800 border border-gold-500/40 flex items-center justify-center">
-              <Disc3 className="w-6 h-6 text-gold-500" />
-            </div>
-            <div>
-              <div className="font-display text-2xl tracking-wider text-cream-50">TAPE DECK</div>
-              <div className="section-label">Member Access</div>
-            </div>
+    <div style={{ minHeight: '100vh', background: '#070b14', color: '#f8fafc', fontFamily: 'Inter, system-ui, sans-serif', padding: '28px 18px', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: 470, margin: '0 auto' }}>
+        <Link to="/tapedeck" style={{ color: '#f5c451', textDecoration: 'none', fontWeight: 700 }}>← Back to Tape Deck</Link>
+        <header style={{ margin: '34px 0 24px' }}>
+          <div style={{ color: '#f5c451', fontSize: 12, fontWeight: 900, letterSpacing: 4 }}>LOSOMEDIA PRESENTS</div>
+          <h1 style={{ fontSize: 34, margin: '8px 0 5px', letterSpacing: 1 }}>TAPE DECK</h1>
+          <p style={{ color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>Member access for the new Tape Deck music platform.</p>
+        </header>
+        <section style={{ padding: 24, border: '1px solid #263244', borderRadius: 18, background: '#111827' }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
+            <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signin' ? '#f5c451' : '#1e293b', color: mode === 'signin' ? '#111827' : '#e2e8f0' }}>Sign In</button>
+            <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#f5c451' : '#1e293b', color: mode === 'signup' ? '#111827' : '#e2e8f0' }}>Create Account</button>
           </div>
-          <div className="flex gap-2 mb-6">
-            <button onClick={() => setMode('signin')} className={`flex-1 py-2 rounded border ${mode === 'signin' ? 'border-gold-500/50 text-gold-400 bg-gold-500/10' : 'border-ink-600 text-cream-300/50'}`}>Sign In</button>
-            <button onClick={() => setMode('signup')} className={`flex-1 py-2 rounded border ${mode === 'signup' ? 'border-gold-500/50 text-gold-400 bg-gold-500/10' : 'border-ink-600 text-cream-300/50'}`}>Create Account</button>
-          </div>
-          <form onSubmit={submit} className="space-y-4">
-            {mode === 'signup' && <input value={name} onChange={e=>setName(e.target.value)} placeholder="Display name" className="w-full bg-ink-900 border border-ink-600 rounded px-4 py-3 outline-none focus:border-gold-500/60" />}
-            <input required type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email address" className="w-full bg-ink-900 border border-ink-600 rounded px-4 py-3 outline-none focus:border-gold-500/60" />
-            <input required minLength={6} type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Password" className="w-full bg-ink-900 border border-ink-600 rounded px-4 py-3 outline-none focus:border-gold-500/60" />
-            <button disabled={busy} className="btn-primary w-full justify-center disabled:opacity-50">
-              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}{mode === 'signin' ? 'Sign In' : 'Create Account'}
-            </button>
+          <form onSubmit={submit}>
+            {mode === 'signup' && <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Display name<input value={name} onChange={e => setName(e.target.value)} placeholder="Artist or member name" style={field} /></label>}
+            <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Email address<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={field} /></label>
+            <label style={{ display: 'block', marginBottom: 18, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Password<input required minLength={6} type="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" style={field} /></label>
+            <button type="submit" disabled={busy} style={{ ...primary, opacity: busy ? .65 : 1 }}>{busy ? 'PLEASE WAIT…' : mode === 'signin' ? 'SIGN IN TO TAPE DECK' : 'CREATE TAPE DECK ACCOUNT'}</button>
           </form>
-          <div className="flex items-center gap-3 my-5"><div className="divider-line flex-1"/><span className="font-mono text-[10px] text-cream-300/30">OR</span><div className="divider-line flex-1"/></div>
-          <button onClick={google} disabled={busy} className="btn-ghost w-full justify-center">Continue with Google</button>
-          {message && <p className="mt-4 text-sm text-signal-green/80">{message}</p>}
-          {error && <p className="mt-4 text-sm text-signal-red/80">{error}</p>}
-        </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0', color: '#64748b', fontSize: 12 }}><span style={{ height: 1, flex: 1, background: '#334155' }} /> OR <span style={{ height: 1, flex: 1, background: '#334155' }} /></div>
+          <button type="button" onClick={google} disabled={busy} style={{ ...primary, background: '#1e293b', color: '#f8fafc', border: '1px solid #475569' }}>Continue with Google</button>
+          {message && <p role="status" style={{ color: '#86efac', background: '#052e16', padding: 12, borderRadius: 8, lineHeight: 1.5 }}>{message}</p>}
+          {error && <p role="alert" style={{ color: '#fecaca', background: '#450a0a', padding: 12, borderRadius: 8, lineHeight: 1.5, overflowWrap: 'anywhere' }}>{error}</p>}
+        </section>
+        <p style={{ color: '#64748b', fontSize: 12, marginTop: 18, lineHeight: 1.5 }}>You stay on this Tape Deck site during sign-in. After successful sign-in, you return to the new Tape Deck upload page.</p>
       </div>
     </div>
   );
