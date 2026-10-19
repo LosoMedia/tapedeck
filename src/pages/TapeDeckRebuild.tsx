@@ -223,7 +223,7 @@ export function TapeDeckRebuild() {
               const artistName = (tape as TapeRow & { artist_name?: string }).artist || (tape as TapeRow & { artist_name?: string }).artist_name || 'Independent artist';
               return <article key={tape.id} className="td-card">
                 <div className="td-cover" style={coverStyle(index)}>{tape.cover_url ? <img src={tape.cover_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }} /> : <span className="td-cover-mark">TAPE DECK / {String(index + 1).padStart(2, '0')}</span>}</div>
-                <div className="td-track-title" title={tape.title}>{tape.title || 'Untitled Tape'}</div>
+                <Link className="td-track-title" title={tape.title} to={"/tapedeck/track/" + tape.id} style={{ display: "block", color: "#f4f5f7", textDecoration: "none" }}>{tape.title || 'Untitled Tape'}</Link>
                 <div className="td-muted" style={{ marginBottom: 8 }}>{tape.artist_id ? <Link to={"/tapedeck/artist/" + tape.artist_id} style={{ color: "#b7c2d3", textDecoration: "none" }}>{artistName}</Link> : artistName}</div>
                 {description && <p style={{ color: '#9ba7b8', fontSize: 12, lineHeight: 1.5, margin: '0 0 10px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{description}</p>}
                 {tape.audio_url ? <audio controls preload="none" src={tape.audio_url} style={{ width: '100%', height: 34 }} aria-label={'Play ' + tape.title}>Audio playback not supported.</audio> : <span className="td-muted">Audio preview unavailable</span>}
