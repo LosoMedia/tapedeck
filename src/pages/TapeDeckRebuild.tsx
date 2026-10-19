@@ -31,6 +31,7 @@ export function TapeDeckRebuild() {
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [classification, setClassification] = useState<'ai' | 'organic' | 'hybrid'>('organic');
+  const [reviewRoute, setReviewRoute] = useState<'none' | 'dedicated' | 'random' | 'both'>('random');
   const [genre, setGenre] = useState('Hip-hop');
   const [description, setDescription] = useState('');
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -83,7 +84,7 @@ export function TapeDeckRebuild() {
       });
       if (storageError) throw new Error('Audio upload failed: ' + storageError.message);
       const { data: urlData } = supabase.storage.from('tape-audio').getPublicUrl(uploadedPath);
-      const { error: saveError } = await supabase.from('tapes').insert({
+      const { data: savedTape, error: saveError } = await supabase.from('tapes').insert({
         artist_id: sessionUser.id,
         title: title.trim(),
         artist: artist.trim() || sessionUser.email?.split('@')[0] || 'Independent artist',
@@ -100,9 +101,16 @@ export function TapeDeckRebuild() {
         collaboration_status: 'open',
         rating: 0,
         plays: '0'
-      });
-      if (saveError) throw new Error('Audio uploaded, but the track record was not saved: ' + saveError.message);
-      setTitle(''); setArtist(''); setGenre('Hip-hop'); setDescription(''); setAudioFile(null);
+      }).select('id').single();
+      if (saveError || !savedTape) throw new Error('Audio uploaded, but the track record was not saved: ' + (saveError?.message || 'No track record returned.'));
+      if (reviewRoute !== 'none') {
+        const routes = reviewRoute === 'both' ? ['dedicated', 'random'] : [reviewRoute];
+        const { error: queueError } = await supabase.from('tape_review_queue').insert(
+          routes.map((queue_type) => ({ tape_id: savedTape.id, artist_id: sessionUser.id, queue_type, status: 'waiting' }))
+        );
+        if (queueError) throw new Error('Your Tape was published, but review enrollment failed: ' + queueError.message + '. Your track is safe; you can retry review enrollment after the queue setup is complete.');
+      }
+      setTitle(''); setArtist(''); setGenre('Hip-hop'); setDescription(''); setAudioFile(null); setReviewRoute('random');
       const picker = document.getElementById('tape-audio-picker') as HTMLInputElement | null;
       if (picker) picker.value = '';
       setNotice('Your Tape has been published.');
@@ -255,6 +263,15 @@ export function TapeDeckRebuild() {
             <label style={label}>Genre<select style={field} value={genre} onChange={e => setGenre(e.target.value)}>{genres.filter(g => g !== 'All music').map(g => <option key={g} value={g}>{g}</option>)}<option value="Other">Other</option></select></label>
           </div>
           <label style={label}>About this track<textarea style={{ ...field, minHeight: 82, resize: 'vertical' }} value={description} onChange={e => setDescription(e.target.value)} placeholder="What should listeners know?" /></label>
+          <label style={label}>Review submission
+            <select style={field} value={reviewRoute} onChange={e => setReviewRoute(e.target.value as 'none' | 'dedicated' | 'random' | 'both')}>
+              <option value="random">Random Pool — FREE during beta</option>
+              <option value="dedicated">Dedicated review queue</option>
+              <option value="both">Submit to both queues</option>
+              <option value="none">Publish only — no review yet</option>
+            </select>
+          </label>
+          <p style={{ color: '#ffb5c3', fontSize: 12, lineHeight: 1.5, marginTop: 7 }}>Random Pool submissions are free throughout beta. No payment is collected or required.</p>
           {!sessionUser && <p style={{ color: '#ff91a6', fontSize: 13, lineHeight: 1.5 }}>You need an account before publishing. <Link to="/tapedeck/auth" style={{ color: gold }}>Sign in or join here.</Link></p>}
           {error && <p role="alert" style={{ color: '#fecaca', background: '#351a22', border: '1px solid #6e303b', padding: 11, borderRadius: 9, overflowWrap: 'anywhere', fontSize: 13 }}>{error}</p>}
           <div style={{ display: 'flex', gap: 10, marginTop: 20 }}><button type="button" onClick={() => setShowUpload(false)} style={{ ...button, flex: 1, background: '#202020', color: '#d7deea', borderColor: '#383838' }}>Cancel</button><button type="submit" disabled={busy || !sessionUser} style={{ ...button, flex: 1, opacity: busy || !sessionUser ? .55 : 1 }}>{busy ? 'UPLOADING…' : <><Play size={15} /> Publish Tape</>}</button></div>
