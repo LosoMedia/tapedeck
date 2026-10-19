@@ -4,9 +4,9 @@ import { ArrowLeft, BarChart3, ExternalLink, MessageSquareText, Music2, Star, Us
 import { supabase, type TapeRow, type TapeReviewRow } from '@/lib/supabase';
 
 const gold = '#d8b45a';
-const panel: React.CSSProperties = { background: '#111824', border: '1px solid #273244', borderRadius: 16, padding: 20 };
+const panel: React.CSSProperties = { background: '#191919', border: '1px solid #303030', borderRadius: 16, padding: 20 };
 const muted: React.CSSProperties = { color: '#9ba7b8', fontSize: 13, lineHeight: 1.6 };
-const button: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, background: '#151d2a', color: '#e2e8f0', border: '1px solid #354052', borderRadius: 10, padding: '10px 13px', textDecoration: 'none', fontWeight: 750 };
+const button: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, background: '#202020', color: '#e2e8f0', border: '1px solid #383838', borderRadius: 10, padding: '10px 13px', textDecoration: 'none', fontWeight: 750 };
 
 export function ArtistDashboardPage() {
   const navigate = useNavigate();
@@ -51,9 +51,9 @@ export function ArtistDashboardPage() {
   const reviewsByTrack = useMemo(() => reviews.reduce<Record<string, number>>((all, review) => { all[review.tape_id] = (all[review.tape_id] || 0) + 1; return all; }, {}), [reviews]);
   const trackNames = useMemo(() => Object.fromEntries(tracks.map(t => [t.id, t.title || 'Untitled Tape'])), [tracks]);
 
-  return <div style={{ minHeight: '100vh', background: '#090d14', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', paddingBottom: 48 }}>
-    <style>{`*{box-sizing:border-box}body{margin:0}.dash-wrap{width:min(1050px,calc(100% - 32px));margin:0 auto}.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.dash-card{background:#0c1320;border:1px solid #293548;border-radius:12px;padding:15px}.dash-muted{color:#9ba7b8;font-size:13px;line-height:1.6}`}</style>
-    <header style={{ borderBottom: '1px solid #222c3b', padding: 18 }}><div className="dash-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+  return <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', paddingBottom: 48 }}>
+    <style>{`*{box-sizing:border-box}body{margin:0}.dash-wrap{width:min(1050px,calc(100% - 32px));margin:0 auto}.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.dash-card{background:#141414;border:1px solid #303030;border-radius:12px;padding:15px}.dash-muted{color:#9ba7b8;font-size:13px;line-height:1.6}`}</style>
+    <header style={{ borderBottom: '1px solid #2b2b2b', padding: 18 }}><div className="dash-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
       <Link to="/tapedeck" style={{ color: '#f4f5f7', textDecoration: 'none', fontWeight: 900 }}><span style={{ color: gold }}>◈</span> TAPE DECK.</Link>
       <span className="dash-muted">{email}</span>
     </div></header>
@@ -63,7 +63,7 @@ export function ArtistDashboardPage() {
         {error && <p role="alert" style={{ background: '#351a22', color: '#fecaca', padding: 12, borderRadius: 10, overflowWrap: 'anywhere' }}>{error}</p>}
         <section style={{ ...panel, marginTop: 8, marginBottom: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 18 }}>
           <div><div style={{ color: gold, fontSize: 10, fontWeight: 900, letterSpacing: 2.5 }}>ARTIST WORKSPACE</div><h1 style={{ fontSize: 'clamp(28px,4vw,40px)', margin: '8px 0' }}>Welcome back, {profileName}</h1><p style={{ ...muted, margin: 0 }}>Your tracks, community feedback, and artist profile in one place.</p></div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9 }}><Link to="/tapedeck/profile" style={{ ...button, background: gold, color: '#10151f', borderColor: '#b89b50' }}><UserRound size={16} /> Edit profile</Link><Link to="/tapedeck" style={button}><Music2 size={16} /> Discover music</Link></div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 9 }}><Link to="/tapedeck/profile" style={{ ...button, background: gold, color: '#111111', borderColor: '#b89b50' }}><UserRound size={16} /> Edit profile</Link><Link to="/tapedeck" style={button}><Music2 size={16} /> Discover music</Link></div>
         </section>
         <section className="dash-grid" style={{ marginBottom: 22 }}>
           <div style={panel}><Music2 color={gold} size={21} /><div style={{ fontSize: 29, fontWeight: 900, marginTop: 8 }}>{tracks.length}</div><div style={muted}>Your tracks</div></div>
@@ -76,7 +76,7 @@ export function ArtistDashboardPage() {
           {tracks.length ? <div style={{ display: 'grid', gap: 10 }}>{tracks.map(track => <article key={track.id} className="dash-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
             <div style={{ minWidth: 0, flex: 1 }}><div style={{ fontWeight: 850, overflowWrap: 'anywhere' }}>{track.title || 'Untitled Tape'}</div><div className="dash-muted">{track.genre || 'Independent music'} · {track.classification || 'Track'} · {reviewsByTrack[track.id] || 0} {(reviewsByTrack[track.id] || 0) === 1 ? 'review' : 'reviews'}</div></div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><Link to={'/tapedeck/track/' + track.id} style={button}>Open track <ExternalLink size={14} /></Link></div>
-          </article>)}</div> : <div className="dash-card"><p style={muted}>No tracks are linked to this account yet.</p><Link to="/tapedeck" style={{ ...button, background: gold, color: '#10151f' }}>Explore Tape Deck</Link></div>}
+          </article>)}</div> : <div className="dash-card"><p style={muted}>No tracks are linked to this account yet.</p><Link to="/tapedeck" style={{ ...button, background: gold, color: '#111111' }}>Explore Tape Deck</Link></div>}
         </section>
         <section style={panel}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}><h2 style={{ margin: 0, fontSize: 21 }}>Latest community feedback</h2><span style={muted}>Newest first</span></div>
