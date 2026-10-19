@@ -9,8 +9,8 @@ const field: React.CSSProperties = {
   background: '#101010', color: '#f8fafc', fontSize: 16
 };
 const primary: React.CSSProperties = {
-  width: '100%', border: '1px solid #b89b50', borderRadius: 10, padding: '14px 16px',
-  background: '#d8b45a', color: '#111111', fontWeight: 900, fontSize: 15, cursor: 'pointer'
+  width: '100%', border: '1px solid #c92749', borderRadius: 10, padding: '14px 16px',
+  background: '#ff3b5c', color: '#111111', fontWeight: 900, fontSize: 15, cursor: 'pointer'
 };
 
 export function AuthPage() {
@@ -72,16 +72,16 @@ export function AuthPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter, system-ui, sans-serif', padding: '28px 18px', boxSizing: 'border-box' }}>
       <div style={{ maxWidth: 470, margin: '0 auto' }}>
-        <Link to="/tapedeck" style={{ color: '#d8b45a', textDecoration: 'none', fontWeight: 700 }}>← Back to Tape Deck</Link>
+        <Link to="/tapedeck" style={{ color: '#ff3b5c', textDecoration: 'none', fontWeight: 700 }}>← Back to Tape Deck</Link>
         <header style={{ margin: '34px 0 24px' }}>
-          <div style={{ color: '#d8b45a', fontSize: 12, fontWeight: 900, letterSpacing: 3 }}>LOSOMEDIA / MUSIC COMMUNITY</div>
-          <h1 style={{ fontSize: 38, margin: '8px 0 5px', letterSpacing: 1, fontWeight: 900 }}>TAPE DECK<span style={{ color: '#d8b45a' }}>.</span></h1>
+          <div style={{ color: '#ff3b5c', fontSize: 12, fontWeight: 900, letterSpacing: 3 }}>LOSOMEDIA / MUSIC COMMUNITY</div>
+          <h1 style={{ fontSize: 38, margin: '8px 0 5px', letterSpacing: 1, fontWeight: 900 }}>TAPE DECK<span style={{ color: '#ff3b5c' }}>.</span></h1>
           <p style={{ color: '#9ba7b8', margin: 0, lineHeight: 1.6 }}>One place for independent artists, AI creators, and the people who listen closely.</p>
         </header>
         <section style={{ padding: 24, border: '1px solid #303030', borderRadius: 18, background: '#191919', boxShadow: '0 24px 70px #0006' }}>
           <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
-            <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signin' ? '#d8b45a' : '#182131', borderColor: mode === 'signin' ? '#b89b50' : '#383838', color: mode === 'signin' ? '#111111' : '#e2e8f0' }}>Sign In</button>
-            <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#d8b45a' : '#182131', borderColor: mode === 'signup' ? '#b89b50' : '#383838', color: mode === 'signup' ? '#111111' : '#e2e8f0' }}>Create Account</button>
+            <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signin' ? '#ff3b5c' : '#182131', borderColor: mode === 'signin' ? '#c92749' : '#383838', color: mode === 'signin' ? '#111111' : '#e2e8f0' }}>Sign In</button>
+            <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#ff3b5c' : '#182131', borderColor: mode === 'signup' ? '#c92749' : '#383838', color: mode === 'signup' ? '#111111' : '#e2e8f0' }}>Create Account</button>
           </div>
           <form onSubmit={submit}>
             {mode === 'signup' && <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Display name<input value={name} onChange={e => setName(e.target.value)} placeholder="Artist or member name" style={field} /></label>}
