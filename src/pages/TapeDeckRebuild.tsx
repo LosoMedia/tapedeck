@@ -183,6 +183,7 @@ export function TapeDeckRebuild() {
             <p className="td-hero-copy">Discover new sounds, put your own music out there, and connect with the people building what comes next. AI-made, human-made, and everything in between.</p>
             <div style={{ display: 'flex', gap: 11, flexWrap: 'wrap', marginTop: 23 }}>
               <a href="#discover" style={button}><Headphones size={17} /> Explore music</a>
+              <Link to="/tapedeck/queue" style={{ ...button, background: 'transparent', color: '#ffc0cb', borderColor: '#63303b' }}><Radio size={17} /> Review Queue</Link>
               <button onClick={() => { setError(''); setShowUpload(true); }} style={{ ...button, background: 'transparent', color: '#f4f5f7', borderColor: '#3a3a3a' }}><UploadCloud size={17} /> Drop a Tape</button>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 28, color: '#9ba7b8', fontSize: 12 }}>
