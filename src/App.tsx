@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { TapeDeckPage } from '@/pages/TapeDeckPage';
+import { TapeDeckRebuild } from '@/pages/TapeDeckRebuild';
 import { ReviewerPage } from '@/pages/ReviewerPage';
 import { AuthPage } from '@/pages/AuthPage';
 import { supabase } from '@/lib/supabase';
@@ -11,13 +11,13 @@ function ProtectedReviewer() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { setAllowed(!!data.session); setChecking(false); });
   }, []);
-  if (checking) return <div className="min-h-screen bg-ink-950" />;
+  if (checking) return <div style={{ minHeight: '100vh', background: '#070b14' }} />;
   return allowed ? <ReviewerPage /> : <Navigate to="/tapedeck/auth" replace />;
 }
 
 function App() {
   return <BrowserRouter><Routes>
-    <Route path="/tapedeck" element={<TapeDeckPage />} />
+    <Route path="/tapedeck" element={<TapeDeckRebuild />} />
     <Route path="/tapedeck/auth" element={<AuthPage />} />
     <Route path="/tapedeck/reviewer" element={<ProtectedReviewer />} />
     <Route path="*" element={<Navigate to="/tapedeck" replace />} />
