@@ -4,20 +4,20 @@ import { Headphones, Search, UploadCloud, Music2, Sparkles, Users, Radio, Disc3,
 import { supabase, type TapeRow } from '@/lib/supabase';
 
 const gold = '#d8b45a';
-const panel: React.CSSProperties = { background: '#111824', border: '1px solid #273244', borderRadius: 16 };
-const field: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '12px 14px', border: '1px solid #344154', borderRadius: 10, background: '#0b1220', color: '#f4f5f7', fontSize: 15 };
+const panel: React.CSSProperties = { background: '#191919', border: '1px solid #303030', borderRadius: 16 };
+const field: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '12px 14px', border: '1px solid #383838', borderRadius: 10, background: '#101010', color: '#f4f5f7', fontSize: 15 };
 const label: React.CSSProperties = { display: 'block', color: '#c5cedb', fontSize: 13, fontWeight: 700, marginTop: 14 };
-const button: React.CSSProperties = { border: '1px solid #b89b50', borderRadius: 10, padding: '11px 15px', background: gold, color: '#10151f', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' };
+const button: React.CSSProperties = { border: '1px solid #b89b50', borderRadius: 10, padding: '11px 15px', background: gold, color: '#111111', fontWeight: 800, fontSize: 14, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' };
 
 const genres = ['All music', 'Hip-hop', 'R&B', 'Pop', 'Electronic', 'Rock', 'Experimental'];
 
 function coverStyle(index: number): React.CSSProperties {
   const covers = [
-    'radial-gradient(circle at 75% 22%,#f5d68b 0,transparent 24%),linear-gradient(140deg,#7c2d46,#171a2b 65%,#080b12)',
-    'radial-gradient(circle at 25% 70%,#50c8bd 0,transparent 28%),linear-gradient(145deg,#162b4c,#111824 58%,#362a48)',
-    'radial-gradient(circle at 68% 35%,#ff9a62 0,transparent 25%),linear-gradient(135deg,#412b69,#131927 58%,#080b12)',
-    'radial-gradient(circle at 40% 25%,#e2d4b0 0,transparent 18%),linear-gradient(145deg,#344a40,#121b21 60%,#080b12)',
-    'radial-gradient(circle at 72% 70%,#8ca9f7 0,transparent 30%),linear-gradient(145deg,#33213d,#121824 60%,#080b12)',
+    'radial-gradient(circle at 75% 22%,#f5d68b 0,transparent 24%),linear-gradient(140deg,#7c2d46,#202020 65%,#080808)',
+    'radial-gradient(circle at 25% 70%,#d8b45a 0,transparent 28%),linear-gradient(145deg,#292929,#191919 58%,#292929)',
+    'radial-gradient(circle at 68% 35%,#d8b45a 0,transparent 25%),linear-gradient(135deg,#2d2d2d,#1b1b1b 58%,#080808)',
+    'radial-gradient(circle at 40% 25%,#e2d4b0 0,transparent 18%),linear-gradient(145deg,#303030,#181818 60%,#080808)',
+    'radial-gradient(circle at 72% 70%,#d8b45a 0,transparent 30%),linear-gradient(145deg,#33213d,#181818 60%,#080808)',
   ];
   return { background: covers[index % covers.length] };
 }
@@ -119,7 +119,7 @@ export function TapeDeckRebuild() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#090d14', color: '#f4f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <style>{`
         * { box-sizing: border-box; }
         body { margin: 0; }
@@ -131,28 +131,28 @@ export function TapeDeckRebuild() {
         .td-hero { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr); gap:28px; align-items:center; padding:44px 0 36px; }
         .td-hero-title { font-size:clamp(36px,5.4vw,64px); line-height:.98; letter-spacing:-2px; margin:14px 0 18px; font-weight:950; max-width:720px; }
         .td-hero-copy { color:#a3adbd; line-height:1.7; font-size:16px; max-width:560px; }
-        .td-feature { min-height:260px; border-radius:22px; border:1px solid #354052; background:radial-gradient(circle at 70% 20%,#6e5c2f55,transparent 30%),linear-gradient(145deg,#18253a,#0d121c 68%); padding:25px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; }
+        .td-feature { min-height:260px; border-radius:22px; border:1px solid #383838; background:radial-gradient(circle at 70% 20%,#6e5c2f55,transparent 30%),linear-gradient(145deg,#252525,#101010 68%); padding:25px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; position:relative; }
         .td-feature:after { content:''; position:absolute; width:190px; height:190px; right:-35px; bottom:-45px; border:1px solid #d8b45a66; border-radius:50%; box-shadow:0 0 0 18px #d8b45a0b,0 0 0 38px #d8b45a08; }
-        .td-chip { display:inline-flex; align-items:center; gap:7px; border:1px solid #3b4658; background:#121a27; color:#d4dbe5; border-radius:999px; padding:7px 10px; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:800; }
+        .td-chip { display:inline-flex; align-items:center; gap:7px; border:1px solid #383838; background:#181818; color:#d4dbe5; border-radius:999px; padding:7px 10px; font-size:11px; letter-spacing:1px; text-transform:uppercase; font-weight:800; }
         .td-section-head { display:flex; align-items:end; justify-content:space-between; gap:16px; margin:12px 0 18px; }
         .td-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
-        .td-card { min-width:0; background:#111824; border:1px solid #273244; border-radius:15px; padding:11px; transition:transform .18s,border-color .18s; }
+        .td-card { min-width:0; background:#191919; border:1px solid #303030; border-radius:15px; padding:11px; transition:transform .18s,border-color .18s; }
         .td-card:hover { transform:translateY(-3px); border-color:#6b634b; }
         .td-cover { aspect-ratio:1/1; border-radius:10px; display:flex; align-items:end; padding:12px; overflow:hidden; }
         .td-cover-mark { font-size:11px; letter-spacing:2px; font-weight:900; color:#ffffffc9; text-shadow:0 2px 12px #000; }
         .td-track-title { font-size:15px; font-weight:850; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin:12px 0 5px; }
         .td-muted { color:#8995a7; font-size:12px; }
         .td-search { position:relative; width:min(330px,100%); }
-        .td-search input { width:100%; background:#101722; border:1px solid #2c3749; border-radius:10px; padding:12px 12px 12px 38px; color:#f4f5f7; outline:none; }
+        .td-search input { width:100%; background:#151515; border:1px solid #333333; border-radius:10px; padding:12px 12px 12px 38px; color:#f4f5f7; outline:none; }
         .td-search input:focus { border-color:#a88d4d; }
-        .td-genre { border:1px solid #2b3648; background:#101722; color:#aeb8c8; padding:9px 13px; border-radius:999px; font-size:13px; cursor:pointer; }
+        .td-genre { border:1px solid #333333; background:#151515; color:#aeb8c8; padding:9px 13px; border-radius:999px; font-size:13px; cursor:pointer; }
         .td-genre.active { color:#f4f5f7; border-color:#a88d4d; background:#d8b45a18; }
-        .td-bottom { border-top:1px solid #222c3b; margin-top:54px; padding:25px 0 32px; color:#758195; font-size:12px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .td-bottom { border-top:1px solid #2b2b2b; margin-top:54px; padding:25px 0 32px; color:#758195; font-size:12px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
         @media(max-width:800px) { .td-hero { grid-template-columns:1fr; padding-top:30px; } .td-feature { min-height:200px; } .td-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .td-section-head { align-items:stretch; flex-direction:column; } .td-search { width:100%; } }
         @media(max-width:430px) { .td-wrap { width:calc(100% - 24px); } .td-nav { align-items:flex-start; } .td-nav-links { display:none !important; } .td-hero-title { letter-spacing:-1px; } .td-grid { gap:10px; } }
       `}</style>
 
-      <header style={{ borderBottom: '1px solid #222c3b', background: '#0b1019eF', position: 'sticky', top: 0, zIndex: 5, backdropFilter: 'blur(14px)' }}>
+      <header style={{ borderBottom: '1px solid #2b2b2b', background: '#0b1019eF', position: 'sticky', top: 0, zIndex: 5, backdropFilter: 'blur(14px)' }}>
         <div className="td-wrap td-nav">
           <Link to="/tapedeck" style={{ color: '#f4f5f7', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ width: 35, height: 35, border: '1px solid #a88d4d', borderRadius: 10, display: 'grid', placeItems: 'center', color: gold }}><Disc3 size={21} /></span>
@@ -162,7 +162,7 @@ export function TapeDeckRebuild() {
             <a className="td-link" href="#discover">Discover</a><a className="td-link" href="#community">Community</a><a className="td-link" href="#upload">Upload music</a>
           </nav>
           <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
-            {sessionUser ? <><Link to="/tapedeck/profile" className="td-link" style={{ color: gold }}>My Profile</Link><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#151d2a', color: '#e2e8f0', borderColor: '#354052', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
+            {sessionUser ? <><Link to="/tapedeck/profile" className="td-link" style={{ color: gold }}>My Profile</Link><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#202020', color: '#e2e8f0', borderColor: '#383838', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
           </div>
         </div>
       </header>
@@ -175,7 +175,7 @@ export function TapeDeckRebuild() {
             <p className="td-hero-copy">Discover new sounds, put your own music out there, and connect with the people building what comes next. AI-made, human-made, and everything in between.</p>
             <div style={{ display: 'flex', gap: 11, flexWrap: 'wrap', marginTop: 23 }}>
               <a href="#discover" style={button}><Headphones size={17} /> Explore music</a>
-              <button onClick={() => { setError(''); setShowUpload(true); }} style={{ ...button, background: 'transparent', color: '#f4f5f7', borderColor: '#3a4659' }}><UploadCloud size={17} /> Drop a Tape</button>
+              <button onClick={() => { setError(''); setShowUpload(true); }} style={{ ...button, background: 'transparent', color: '#f4f5f7', borderColor: '#3a3a3a' }}><UploadCloud size={17} /> Drop a Tape</button>
             </div>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 28, color: '#9ba7b8', fontSize: 12 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}><Music2 size={15} color={gold} /> Artist-first discovery</span>
@@ -212,7 +212,7 @@ export function TapeDeckRebuild() {
           {notice && <p role="status" style={{ color: '#b9f6ce', background: '#10281c', border: '1px solid #27563c', padding: 12, borderRadius: 10 }}>{notice}</p>}
           {loading ? <p style={{ color: '#8f9bad', padding: '20px 0' }}>Loading the latest Tapes…</p> : visibleTapes.length === 0 ? (
             <div style={{ ...panel, padding: '38px 22px', textAlign: 'center' }}>
-              <span style={{ display: 'inline-grid', placeItems: 'center', width: 52, height: 52, borderRadius: 16, border: '1px solid #39465a', color: gold, marginBottom: 13 }}><Music2 size={24} /></span>
+              <span style={{ display: 'inline-grid', placeItems: 'center', width: 52, height: 52, borderRadius: 16, border: '1px solid #3a3a3a', color: gold, marginBottom: 13 }}><Music2 size={24} /></span>
               <h3 style={{ margin: '0 0 7px', fontSize: 18 }}>{search || activeGenre !== 'All music' ? 'No matching tracks yet' : 'The first track could be yours.'}</h3>
               <p style={{ margin: '0 auto 18px', color: '#8f9bad', fontSize: 13, lineHeight: 1.6, maxWidth: 430 }}>{search || activeGenre !== 'All music' ? 'Try a different search or genre.' : 'This deck is just getting warmed up. Publish a track and help start the collection.'}</p>
               <button onClick={() => { setError(''); setShowUpload(true); }} style={button}><UploadCloud size={16} /> Drop a Tape</button>
@@ -230,10 +230,10 @@ export function TapeDeckRebuild() {
               </article>;
             })}
           </div>}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 22 }}><button onClick={() => { setError(''); void loadTapes(); }} style={{ ...button, background: 'transparent', color: '#c8d0dc', borderColor: '#344154' }}><RefreshCw size={14} /> Refresh tracks</button></div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 22 }}><button onClick={() => { setError(''); void loadTapes(); }} style={{ ...button, background: 'transparent', color: '#c8d0dc', borderColor: '#383838' }}><RefreshCw size={14} /> Refresh tracks</button></div>
         </section>
 
-        <section id="upload" style={{ ...panel, marginTop: 48, padding: '25px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', background: 'linear-gradient(110deg,#131d2b,#101620)' }}>
+        <section id="upload" style={{ ...panel, marginTop: 48, padding: '25px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', background: 'linear-gradient(110deg,#1b1b1b,#151515)' }}>
           <div><div style={{ color: gold, fontSize: 10, fontWeight: 900, letterSpacing: 2.5, marginBottom: 8 }}>YOUR TURN</div><h2 style={{ fontSize: 23, margin: '0 0 7px' }}>Got something worth hearing?</h2><p style={{ color: '#9ba7b8', margin: 0, fontSize: 13, lineHeight: 1.6 }}>Put your latest work on the deck and let people press play.</p></div>
           <button onClick={() => { setError(''); setShowUpload(true); }} style={button}><UploadCloud size={17} /> Publish a Tape</button>
         </section>
@@ -243,7 +243,7 @@ export function TapeDeckRebuild() {
 
       {showUpload && <div role="presentation" onClick={(e) => { if (e.target === e.currentTarget) setShowUpload(false); }} style={{ position: 'fixed', inset: 0, zIndex: 20, background: '#02050bd9', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, overflowY: 'auto' }}>
         <form onSubmit={submitTape} style={{ ...panel, width: 'min(540px,100%)', padding: 23, margin: 'auto', boxShadow: '0 30px 100px #0009' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}><div><div style={{ color: gold, fontSize: 10, letterSpacing: 2, fontWeight: 900 }}>PUBLISH YOUR MUSIC</div><h2 style={{ margin: '7px 0 5px', fontSize: 25 }}>Drop a Tape</h2><p style={{ color: '#8f9bad', margin: 0, fontSize: 13 }}>MP3, M4A, WAV, AAC, OGG, FLAC or WebM. Max 50 MB.</p></div><button type="button" aria-label="Close upload" onClick={() => setShowUpload(false)} style={{ background: '#1b2534', border: '1px solid #39465a', color: '#f4f5f7', borderRadius: 9, padding: '7px 10px', cursor: 'pointer' }}>✕</button></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}><div><div style={{ color: gold, fontSize: 10, letterSpacing: 2, fontWeight: 900 }}>PUBLISH YOUR MUSIC</div><h2 style={{ margin: '7px 0 5px', fontSize: 25 }}>Drop a Tape</h2><p style={{ color: '#8f9bad', margin: 0, fontSize: 13 }}>MP3, M4A, WAV, AAC, OGG, FLAC or WebM. Max 50 MB.</p></div><button type="button" aria-label="Close upload" onClick={() => setShowUpload(false)} style={{ background: '#252525', border: '1px solid #3a3a3a', color: '#f4f5f7', borderRadius: 9, padding: '7px 10px', cursor: 'pointer' }}>✕</button></div>
           <label style={label}>Audio file *
             <input id="tape-audio-picker" type="file" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac,.webm" required onChange={e => setAudioFile(e.currentTarget.files?.[0] || null)} style={{ ...field, marginTop: 7, padding: 12 }} />
           </label>
@@ -257,7 +257,7 @@ export function TapeDeckRebuild() {
           <label style={label}>About this track<textarea style={{ ...field, minHeight: 82, resize: 'vertical' }} value={description} onChange={e => setDescription(e.target.value)} placeholder="What should listeners know?" /></label>
           {!sessionUser && <p style={{ color: '#e9d29a', fontSize: 13, lineHeight: 1.5 }}>You need an account before publishing. <Link to="/tapedeck/auth" style={{ color: gold }}>Sign in or join here.</Link></p>}
           {error && <p role="alert" style={{ color: '#fecaca', background: '#351a22', border: '1px solid #6e303b', padding: 11, borderRadius: 9, overflowWrap: 'anywhere', fontSize: 13 }}>{error}</p>}
-          <div style={{ display: 'flex', gap: 10, marginTop: 20 }}><button type="button" onClick={() => setShowUpload(false)} style={{ ...button, flex: 1, background: '#151d2a', color: '#d7deea', borderColor: '#344154' }}>Cancel</button><button type="submit" disabled={busy || !sessionUser} style={{ ...button, flex: 1, opacity: busy || !sessionUser ? .55 : 1 }}>{busy ? 'UPLOADING…' : <><Play size={15} /> Publish Tape</>}</button></div>
+          <div style={{ display: 'flex', gap: 10, marginTop: 20 }}><button type="button" onClick={() => setShowUpload(false)} style={{ ...button, flex: 1, background: '#202020', color: '#d7deea', borderColor: '#383838' }}>Cancel</button><button type="submit" disabled={busy || !sessionUser} style={{ ...button, flex: 1, opacity: busy || !sessionUser ? .55 : 1 }}>{busy ? 'UPLOADING…' : <><Play size={15} /> Publish Tape</>}</button></div>
         </form>
       </div>}
     </div>
