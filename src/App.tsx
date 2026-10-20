@@ -7,6 +7,7 @@ import { ArtistProfilePage } from '@/pages/ArtistProfilePage';
 import { ArtistDashboardPage } from '@/pages/ArtistDashboardPage';
 import { TrackDetailPage } from '@/pages/TrackDetailPage';
 import { ReviewQueuePage } from '@/pages/ReviewQueuePage';
+import { AdminAccessPage } from '@/pages/AdminAccessPage';
 import { supabase } from '@/lib/supabase';
 
 function ProtectedReviewer() {
@@ -44,6 +45,7 @@ function App() {
     <Route path="/tapedeck/artist/:artistId" element={<ArtistProfilePage />} />
     <Route path="/tapedeck/track/:trackId" element={<TrackDetailPage />} />
     <Route path="/tapedeck/reviewer" element={<ProtectedReviewer />} />
+    <Route path="/tapedeck/admin" element={<AdminAccessPage />} />
     <Route path="/tapedeck/queue" element={<ReviewQueuePage />} />
     <Route path="*" element={<Navigate to="/tapedeck" replace />} />
   </Routes></BrowserRouter>;
