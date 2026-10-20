@@ -19,6 +19,7 @@ export function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [accountType, setAccountType] = useState<'artist' | 'reviewer'>('artist');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -26,7 +27,10 @@ export function AuthPage() {
   useEffect(() => {
     let active = true;
     supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session) navigate('/tapedeck', { replace: true });
+      if (active && data.session) {
+        const type = data.session.user.user_metadata?.account_type;
+        navigate(type === 'reviewer' ? '/tapedeck/reviewer' : '/tapedeck/dashboard', { replace: true });
+      }
     });
     return () => { active = false; };
   }, [navigate]);
@@ -39,7 +43,7 @@ export function AuthPage() {
         const { error: authError } = await supabase.auth.signUp({
           email: email.trim(), password,
           options: {
-            data: { display_name: name.trim() },
+            data: { display_name: name.trim(), account_type: accountType },
             emailRedirectTo: currentSite + '/tapedeck/auth',
           },
         });
@@ -48,7 +52,11 @@ export function AuthPage() {
       } else {
         const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (authError) setError(authError.message);
-        else navigate('/tapedeck', { replace: true });
+        else {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const type = sessionData.session?.user.user_metadata?.account_type;
+          navigate(type === 'reviewer' ? '/tapedeck/reviewer' : '/tapedeck/dashboard', { replace: true });
+        }
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Sign-in failed. Please try again.');
@@ -84,7 +92,20 @@ export function AuthPage() {
             <button type="button" onClick={() => { setMode('signup'); setError(''); setMessage(''); }} style={{ ...primary, background: mode === 'signup' ? '#ff3b5c' : '#182131', borderColor: mode === 'signup' ? '#c92749' : '#383838', color: mode === 'signup' ? '#111111' : '#e2e8f0' }}>Create Account</button>
           </div>
           <form onSubmit={submit}>
-            {mode === 'signup' && <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Display name<input value={name} onChange={e => setName(e.target.value)} placeholder="Artist or member name" style={field} /></label>}
+            {mode === 'signup' && <>
+              <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Display name<input value={name} onChange={e => setName(e.target.value)} placeholder="Artist or reviewer name" style={field} /></label>
+              <fieldset style={{ border: '1px solid #383838', borderRadius: 12, padding: 14, margin: '0 0 16px' }}>
+                <legend style={{ color: '#cbd5e1', padding: '0 6px', fontSize: 13, fontWeight: 800 }}>How will you use Tape Deck?</legend>
+                <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: 10, borderRadius: 9, background: accountType === 'artist' ? '#ff3b5c14' : 'transparent', cursor: 'pointer' }}>
+                  <input type="radio" name="accountType" value="artist" checked={accountType === 'artist'} onChange={() => setAccountType('artist')} style={{ accentColor: '#ff3b5c', marginTop: 4 }} />
+                  <span><strong style={{ display: 'block', color: '#f4f5f7' }}>Artist / Music Creator</strong><span style={{ display: 'block', color: '#9ba7b8', fontSize: 12, lineHeight: 1.5, marginTop: 3 }}>Upload tracks, manage submissions, and receive feedback.</span></span>
+                </label>
+                <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: 10, borderRadius: 9, background: accountType === 'reviewer' ? '#ff3b5c14' : 'transparent', cursor: 'pointer' }}>
+                  <input type="radio" name="accountType" value="reviewer" checked={accountType === 'reviewer'} onChange={() => setAccountType('reviewer')} style={{ accentColor: '#ff3b5c', marginTop: 4 }} />
+                  <span><strong style={{ display: 'block', color: '#f4f5f7' }}>Reviewer</strong><span style={{ display: 'block', color: '#9ba7b8', fontSize: 12, lineHeight: 1.5, marginTop: 3 }}>Open the reviewer console, claim tracks, and submit structured feedback.</span></span>
+                </label>
+              </fieldset>
+            </>}
             <label style={{ display: 'block', marginBottom: 15, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Email address<input required type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" style={field} /></label>
             <label style={{ display: 'block', marginBottom: 18, color: '#cbd5e1', fontSize: 14, fontWeight: 700 }}>Password<input required minLength={6} type="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" style={field} /></label>
             <button type="submit" disabled={busy} style={{ ...primary, opacity: busy ? .65 : 1 }}>{busy ? 'PLEASE WAIT…' : mode === 'signin' ? 'SIGN IN TO TAPE DECK' : 'CREATE TAPE DECK ACCOUNT'}</button>
@@ -94,7 +115,7 @@ export function AuthPage() {
           {message && <p role="status" style={{ color: '#86efac', background: '#052e16', padding: 12, borderRadius: 8, lineHeight: 1.5 }}>{message}</p>}
           {error && <p role="alert" style={{ color: '#fecaca', background: '#450a0a', padding: 12, borderRadius: 8, lineHeight: 1.5, overflowWrap: 'anywhere' }}>{error}</p>}
         </section>
-        <p style={{ color: '#777777', fontSize: 12, marginTop: 18, lineHeight: 1.5 }}>Sign-in returns to the same Tape Deck domain you opened. No hard-coded old-site redirect.</p>
+        <p style={{ color: '#777777', fontSize: 12, marginTop: 18, lineHeight: 1.5 }}>Your account opens the right workspace: artists get the Artist Dashboard; reviewers get the Reviewer Console. Reviewer access still needs server-side role approval before public launch.</p>
       </div>
     </div>
   );
