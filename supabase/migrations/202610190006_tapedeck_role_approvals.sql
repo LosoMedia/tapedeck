@@ -97,4 +97,17 @@ insert into public.tapedeck_user_roles (user_id, role)
 select id, 'artist' from auth.users
 on conflict (user_id) do nothing;
 
+-- Enforce reviewer approval at the database layer too. Hiding the UI is not security.
+drop policy if exists "Signed-in users can publish reviews" on public.tape_reviews;
+drop policy if exists "Approved reviewers can publish reviews" on public.tape_reviews;
+create policy "Approved reviewers can publish reviews"
+  on public.tape_reviews for insert
+  to authenticated
+  with check (
+    public.tapedeck_has_reviewer_access()
+    and length(trim(reviewer_name)) > 0
+    and rating between 1 and 5
+    and length(trim(body)) > 0
+  );
+
 notify pgrst, 'reload schema';
