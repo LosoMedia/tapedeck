@@ -85,13 +85,13 @@ export function ReviewQueuePage() {
     <main className="rq-wrap" style={{ padding: '28px 0 50px' }}>
       <div style={{ color: '#ff91a6', fontSize: 10, letterSpacing: 2.5, fontWeight: 900 }}>COMMUNITY REVIEW SYSTEM</div>
       <h1 style={{ fontSize: 'clamp(30px,6vw,48px)', margin: '8px 0' }}>The Review Queue</h1>
-      <p style={{ ...muted, maxWidth: 650, marginTop: 0 }}>Choose an organized line or let the random pool pick the next tape. Queue updates stream live while this page is open.</p>
+      <p style={{ ...muted, maxWidth: 650, marginTop: 0 }}>Choose Skippers & Tippers, the dedicated paid line, or let the random pool pick the next tape. Queue updates stream live while this page is open.</p>
       <div className="rq-tabs" style={{ margin: '22px 0 16px' }}>
         <button className={'rq-tab' + (queueType === 'random' ? ' active' : '')} onClick={() => setQueueType('random')}><Dices size={15} style={{ verticalAlign: 'middle', marginRight: 6 }} />Random Pool</button>
-        <button className={'rq-tab' + (queueType === 'dedicated' ? ' active' : '')} onClick={() => setQueueType('dedicated')}><ListOrdered size={15} style={{ verticalAlign: 'middle', marginRight: 6 }} />Dedicated Queue</button>
+        <button className={'rq-tab' + (queueType === 'dedicated' ? ' active' : '')} onClick={() => setQueueType('dedicated')}><ListOrdered size={15} style={{ verticalAlign: 'middle', marginRight: 6 }} />Skippers & Tippers</button>
       </div>
       <section style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div><div style={{ color: '#ff91a6', fontWeight: 900, fontSize: 11, letterSpacing: 1.5 }}>{queueType === 'random' ? 'FREE DURING BETA' : 'FIRST IN, FIRST UP'}</div><h2 style={{ margin: '7px 0', fontSize: 22 }}>{queueType === 'random' ? 'Random Pool' : 'Dedicated Queue'}</h2><p style={{ ...muted, margin: 0 }}>{queueType === 'random' ? 'Available tapes are selected at random. No payment required during beta.' : 'Waiting submissions are handled in the order they entered the queue.'}</p></div>
+        <div><div style={{ color: '#ff91a6', fontWeight: 900, fontSize: 11, letterSpacing: 1.5 }}>{queueType === 'random' ? 'FREE DURING BETA' : 'SKIPPERS & TIPPERS'}</div><h2 style={{ margin: '7px 0', fontSize: 22 }}>{queueType === 'random' ? 'Random Pool' : 'Skippers & Tippers'}</h2><p style={{ ...muted, margin: 0 }}>{queueType === 'random' ? 'Available tapes are selected at random. No payment required during beta.' : 'The dedicated paid line, reserved for Skippers & Tippers. Submissions are handled in arrival order; pricing and terms must be shown before joining.'}</p></div>
         <button onClick={claimNext} disabled={busy || waiting.length === 0} style={{ ...action, opacity: busy || waiting.length === 0 ? .5 : 1 }}><Radio size={16} />{busy ? 'Claiming…' : 'Claim next tape'}</button>
       </section>
       {message && <p role="status" style={{ ...muted, color: '#a7e9bd', background: '#10281c', padding: 12, borderRadius: 10 }}>{message}</p>}
@@ -116,7 +116,7 @@ export function ReviewQueuePage() {
               </div>
             </article>;
           })}
-          {!currentRows.length && <div style={{ ...card, textAlign: 'center', padding: 32 }}><Dices size={28} color={red} /><h3 style={{ margin: '10px 0 5px' }}>Nothing in this pool yet</h3><p style={muted}>Publish a Tape and select {queueType === 'random' ? 'Random Pool' : 'Dedicated Queue'} to get started.</p><Link to="/tapedeck" style={action}>Submit a Tape</Link></div>}
+          {!currentRows.length && <div style={{ ...card, textAlign: 'center', padding: 32 }}><Dices size={28} color={red} /><h3 style={{ margin: '10px 0 5px' }}>Nothing in this queue yet</h3><p style={muted}>Publish a Tape and select {queueType === 'random' ? 'Random Pool' : 'Skippers & Tippers'} to get started.</p><Link to="/tapedeck" style={action}>Submit a Tape</Link></div>}
         </div>
       </>}
       <p style={{ ...muted, marginTop: 24 }}><ShieldCheck size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />One active claim per queue entry. Random Pool is free during beta; no surprise charges.</p>
