@@ -55,7 +55,7 @@ export function TapeDeckRebuild() {
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user;
-      setSessionUser(user ? { id: user.id, email: user.email } : null);
+      setSessionUser(user ? { id: user.id, email: user.email, accountType: String(user.user_metadata?.account_type || 'artist') } : null);
     });
     void loadTapes();
     return () => listener.subscription.unsubscribe();
