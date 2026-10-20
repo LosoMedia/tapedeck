@@ -91,7 +91,7 @@ export function ReviewQueuePage() {
         <button className={'rq-tab' + (queueType === 'dedicated' ? ' active' : '')} onClick={() => setQueueType('dedicated')}><ListOrdered size={15} style={{ verticalAlign: 'middle', marginRight: 6 }} />Skippers & Tippers</button>
       </div>
       <section style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap', marginBottom: 16 }}>
-        <div><div style={{ color: '#ff91a6', fontWeight: 900, fontSize: 11, letterSpacing: 1.5 }}>{queueType === 'random' ? 'FREE DURING BETA' : 'SKIPPERS & TIPPERS'}</div><h2 style={{ margin: '7px 0', fontSize: 22 }}>{queueType === 'random' ? 'Random Pool' : 'Skippers & Tippers'}</h2><p style={{ ...muted, margin: 0 }}>{queueType === 'random' ? 'Available tapes are selected at random. No payment required during beta.' : 'The dedicated paid line, reserved for Skippers & Tippers. Submissions are handled in arrival order; pricing and terms must be shown before joining.'}</p></div>
+        <div><div style={{ color: '#ff91a6', fontWeight: 900, fontSize: 11, letterSpacing: 1.5 }}>{queueType === 'random' ? 'FREE DURING BETA' : 'SKIPPERS & TIPPERS'}</div><h2 style={{ margin: '7px 0', fontSize: 22 }}>{queueType === 'random' ? 'Random Pool' : 'Skippers & Tippers'}</h2><p style={{ ...muted, margin: 0 }}>{queueType === 'random' ? 'Available tapes are selected at random. No payment required during beta.' : 'The dedicated paid line for Skippers & Tippers. $3 minimum during paid checkout; PayPal is the planned primary provider. Pricing and terms must be shown before joining.'}</p></div>
         <button onClick={claimNext} disabled={busy || waiting.length === 0} style={{ ...action, opacity: busy || waiting.length === 0 ? .5 : 1 }}><Radio size={16} />{busy ? 'Claiming…' : 'Claim next tape'}</button>
       </section>
       {message && <p role="status" style={{ ...muted, color: '#a7e9bd', background: '#10281c', padding: 12, borderRadius: 10 }}>{message}</p>}
@@ -119,7 +119,7 @@ export function ReviewQueuePage() {
           {!currentRows.length && <div style={{ ...card, textAlign: 'center', padding: 32 }}><Dices size={28} color={red} /><h3 style={{ margin: '10px 0 5px' }}>Nothing in this queue yet</h3><p style={muted}>Publish a Tape and select {queueType === 'random' ? 'Random Pool' : 'Skippers & Tippers'} to get started.</p><Link to="/tapedeck" style={action}>Submit a Tape</Link></div>}
         </div>
       </>}
-      <p style={{ ...muted, marginTop: 24 }}><ShieldCheck size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />One active claim per queue entry. Random Pool is free during beta; no surprise charges.</p>
+      <p style={{ ...muted, marginTop: 24 }}><ShieldCheck size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />One active claim per queue entry. Random Pool is free throughout beta. Skippers & Tippers has a $3 minimum; checkout must confirm payment before a paid submission is accepted.</p>
       <button onClick={() => void load()} style={{ ...action, background: '#202020', borderColor: '#383838', marginTop: 8 }}><RefreshCw size={14} />Refresh queue</button>
     </main>
   </div>;
