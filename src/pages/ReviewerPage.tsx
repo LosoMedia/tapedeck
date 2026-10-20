@@ -283,12 +283,12 @@ export function ReviewerPage() {
                 <a href="#review-queue" className="flex items-center gap-3 rounded-lg px-3 py-2.5 bg-[#ff3b5c]/10 border border-[#ff3b5c]/25 text-[#ff91a6] text-sm">
                   <PenSquare className="w-4 h-4" /> Review Queue
                 </a>
-                <a href="#random-pool" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 hover:bg-ink-800/70 border border-transparent text-sm transition-colors">
-                  <Disc3 className="w-4 h-4" /> Random Pool <span className="ml-auto text-[9px] font-mono text-emerald-300">FREE</span>
-                </a>
-                <a href="#priority-queue" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 hover:bg-ink-800/70 border border-transparent text-sm transition-colors">
+                <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 border border-transparent text-sm">
+                  <Disc3 className="w-4 h-4" /> Random Pool <span className="ml-auto text-[9px] font-mono text-emerald-300">FREE BETA</span>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 border border-transparent text-sm">
                   <Star className="w-4 h-4" /> Skippers &amp; Tippers
-                </a>
+                </div>
                 <a href="/tapedeck/dashboard" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 hover:bg-ink-800/70 border border-transparent text-sm transition-colors">
                   <ChevronLeft className="w-4 h-4" /> Artist Dashboard
                 </a>
