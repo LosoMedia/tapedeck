@@ -54,7 +54,20 @@ export function AuthPage() {
         if (authError) setError(authError.message);
         else {
           const { data: sessionData } = await supabase.auth.getSession();
-          const type = sessionData.session?.user.user_metadata?.account_type;
+          const signedInUser = sessionData.session?.user;
+          const type = signedInUser?.user_metadata?.account_type;
+          if (signedInUser && type === 'reviewer') {
+            const { data: roleRow } = await supabase.from('tapedeck_user_roles').select('role').eq('user_id', signedInUser.id).maybeSingle();
+            if (roleRow?.role !== 'reviewer' && roleRow?.role !== 'admin') {
+              const { data: existingRequest } = await supabase.from('tapedeck_reviewer_requests').select('id').eq('user_id', signedInUser.id).maybeSingle();
+              if (!existingRequest) {
+                await supabase.from('tapedeck_reviewer_requests').insert({ user_id: signedInUser.id, status: 'pending', message: 'Reviewer access requested during signup.' });
+              }
+              setMessage('You are signed in as an artist while your reviewer access request awaits administrator approval.');
+              navigate('/tapedeck/dashboard', { replace: true });
+              return;
+            }
+          }
           navigate(type === 'reviewer' ? '/tapedeck/reviewer' : '/tapedeck/dashboard', { replace: true });
         }
       }
