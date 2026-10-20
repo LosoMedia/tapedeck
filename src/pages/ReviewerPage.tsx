@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Disc3, PenSquare, Star, Loader2, X, CheckCircle2, ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { Disc3, PenSquare, Star, Loader2, X, CheckCircle2, ChevronLeft, ChevronRight, Save, Dices, ListOrdered, RefreshCw, Radio } from 'lucide-react';
 import { supabase, type TapeRow, type TapeReviewRow } from '@/lib/supabase';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { StarRating } from '@/components/analog';
@@ -95,6 +95,10 @@ function buildReviewBody(answers: Answers) {
 
 export function ReviewerPage() {
   const [tapes, setTapes] = useState<TapeRow[]>([]);
+  const [queueType, setQueueType] = useState<'random' | 'dedicated'>('random');
+  const [queueBusy, setQueueBusy] = useState(false);
+  const [queueMessage, setQueueMessage] = useState('');
+  const [queueError, setQueueError] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedTape, setSelectedTape] = useState<TapeRow | null>(null);
   const [reviewsByTape, setReviewsByTape] = useState<Record<string, TapeReviewRow[]>>({});
@@ -110,28 +114,58 @@ export function ReviewerPage() {
   const [error, setError] = useState('');
   const [draftSaved, setDraftSaved] = useState(false);
 
+  const loadQueue = useCallback(async () => {
+    setQueueError('');
+    const { data: queueData, error: queueLoadError } = await supabase
+      .from('tape_review_queue')
+      .select('*')
+      .in('status', ['waiting', 'reviewing'])
+      .order('created_at', { ascending: true })
+      .limit(150);
+    if (queueLoadError) {
+      setQueueError('Queue could not load: ' + queueLoadError.message + '. The queue migration may not be installed yet.');
+      setLoading(false);
+      return;
+    }
+    const queueRows = (queueData || []) as Array<{ tape_id: string; queue_type: 'random' | 'dedicated'; status: string; created_at: string }>;
+    const eligible = queueRows.filter((row) => row.queue_type === queueType);
+    const ids = [...new Set(eligible.map((row) => row.tape_id))];
+    if (!ids.length) {
+      setTapes([]);
+      setLoading(false);
+      return;
+    }
+    const { data: trackData, error: trackError } = await supabase.from('tapes').select('*').in('id', ids);
+    if (trackError) {
+      setQueueError('Queue loaded, but track details failed: ' + trackError.message);
+      setLoading(false);
+      return;
+    }
+    const loadedTapes = (trackData || []) as TapeRow[];
+    setTapes(loadedTapes);
+    const requestedTrackId = new URLSearchParams(window.location.search).get('trackId');
+    if (requestedTrackId) {
+      const requestedTape = loadedTapes.find((tape) => tape.id === requestedTrackId);
+      if (requestedTape) setSelectedTape(requestedTape);
+    }
+    if (selectedTape && !loadedTapes.some((tape) => tape.id === selectedTape.id)) setSelectedTape(null);
+    setLoading(false);
+  }, [queueType, selectedTape]);
+
   useEffect(() => {
+    let active = true;
     supabase.auth.getUser().then(({ data }) => {
+      if (!active) return;
       const user = data.user;
       const displayName = user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
       if (displayName) setReviewerName(displayName);
+      void loadQueue();
     });
-
-    supabase
-      .from('tapes')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        const loadedTapes = (data || []) as TapeRow[];
-        setTapes(loadedTapes);
-        const requestedTrackId = new URLSearchParams(window.location.search).get('trackId');
-        if (requestedTrackId) {
-          const requestedTape = loadedTapes.find((tape) => tape.id === requestedTrackId);
-          if (requestedTape) setSelectedTape(requestedTape);
-        }
-        setLoading(false);
-      });
-  }, []);
+    const channel = supabase.channel('reviewer-console-queue-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tape_review_queue' }, () => { if (active) void loadQueue(); })
+      .subscribe();
+    return () => { active = false; void supabase.removeChannel(channel); };
+  }, [loadQueue]);
 
   const loadReviews = useCallback((tapeId: string) => {
     if (reviewsByTape[tapeId]) return;
@@ -144,6 +178,37 @@ export function ReviewerPage() {
         if (data) setReviewsByTape((prev) => ({ ...prev, [tapeId]: data as TapeReviewRow[] }));
       });
   }, [reviewsByTape]);
+
+  const claimNextTape = async () => {
+    setQueueBusy(true);
+    setQueueError('');
+    setQueueMessage('');
+    const { data, error: claimError } = await supabase.rpc('claim_next_tape_review', { p_queue_type: queueType });
+    setQueueBusy(false);
+    if (claimError) {
+      setQueueError('Could not claim next tape: ' + claimError.message);
+      return;
+    }
+    const claimed = Array.isArray(data) ? data[0] : data;
+    if (!claimed?.tape_id) {
+      setQueueMessage('No waiting tracks in this lane. New submissions will appear here automatically.');
+      await loadQueue();
+      return;
+    }
+    const { data: track, error: trackError } = await supabase.from('tapes').select('*').eq('id', claimed.tape_id).maybeSingle();
+    if (trackError || !track) {
+      setQueueError('The queue item was claimed, but its track could not be loaded: ' + (trackError?.message || 'Track not found.'));
+      await loadQueue();
+      return;
+    }
+    const tape = track as TapeRow;
+    setTapes((previous) => [tape, ...previous.filter((item) => item.id !== tape.id)]);
+    setSelectedTape(tape);
+    setQueueMessage('Now playing: ' + tape.title);
+    window.history.replaceState({}, '', window.location.pathname + '?trackId=' + encodeURIComponent(tape.id));
+    loadReviews(tape.id);
+    await loadQueue();
+  };
 
   const handleTapeClick = (tape: TapeRow) => {
     setSelectedTape(tape);
@@ -283,12 +348,12 @@ export function ReviewerPage() {
                 <a href="#review-queue" className="flex items-center gap-3 rounded-lg px-3 py-2.5 bg-[#ff3b5c]/10 border border-[#ff3b5c]/25 text-[#ff91a6] text-sm">
                   <PenSquare className="w-4 h-4" /> Review Queue
                 </a>
-                <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 border border-transparent text-sm">
-                  <Disc3 className="w-4 h-4" /> Random Pool <span className="ml-auto text-[9px] font-mono text-emerald-300">FREE BETA</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 border border-transparent text-sm">
+                <button type="button" onClick={() => { setQueueType('random'); setSelectedTape(null); setQueueMessage('Random Pool is free. Claim a track to start listening.'); }} className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 border text-sm text-left transition-colors ${queueType === 'random' ? 'bg-[#ff3b5c]/10 border-[#ff3b5c]/25 text-[#ff91a6]' : 'text-cream-200/70 border-transparent hover:bg-ink-800/70'}`}>
+                  <Dices className="w-4 h-4" /> Random Pool <span className="ml-auto text-[9px] font-mono text-emerald-300">FREE</span>
+                </button>
+                <button type="button" onClick={() => { setQueueType('dedicated'); setSelectedTape(null); setQueueMessage('Skippers & Tippers lane selected. Paid placement must never affect a review rating.'); }} className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 border text-sm text-left transition-colors ${queueType === 'dedicated' ? 'bg-[#ff3b5c]/10 border-[#ff3b5c]/25 text-[#ff91a6]' : 'text-cream-200/70 border-transparent hover:bg-ink-800/70'}`}>
                   <Star className="w-4 h-4" /> Skippers &amp; Tippers
-                </div>
+                </button>
                 <a href="/tapedeck/dashboard" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-cream-200/70 hover:bg-ink-800/70 border border-transparent text-sm transition-colors">
                   <ChevronLeft className="w-4 h-4" /> Artist Dashboard
                 </a>
@@ -305,11 +370,17 @@ export function ReviewerPage() {
               <div className="flex items-center justify-between gap-2 mb-3">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#ff91a6]/70">Up next</div>
-                  <h1 className="font-display text-2xl text-cream-50 mt-1">REVIEW QUEUE</h1>
+                  <h1 className="font-display text-2xl text-cream-50 mt-1">{queueType === 'random' ? 'RANDOM POOL' : 'SKIPPERS & TIPPERS'}</h1>
                 </div>
                 <span className="rounded-full bg-ink-800 border border-ink-600/50 px-2.5 py-1 font-mono text-xs text-cream-200/70">{tapes.length}</span>
               </div>
-              <p className="text-xs text-cream-300/45 mb-4">Choose a track to load it in the player.</p>
+              <p className="text-xs text-cream-300/45 mb-4">{queueType === 'random' ? 'Free beta lane. Claim a random waiting submission.' : 'Dedicated lane. Payment affects placement only, never review ratings.'}</p>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <button type="button" onClick={() => void claimNextTape()} disabled={queueBusy} className="btn-primary justify-center text-xs disabled:opacity-50"><Radio className="w-4 h-4" />{queueBusy ? 'Claiming…' : 'Claim Next'}</button>
+                <button type="button" onClick={() => { setLoading(true); void loadQueue(); }} className="btn-ghost justify-center text-xs"><RefreshCw className="w-4 h-4" />Refresh</button>
+              </div>
+              {queueMessage && <p role="status" className="text-xs text-emerald-300 mb-3">{queueMessage}</p>}
+              {queueError && <p role="alert" className="text-xs text-red-300 mb-3 break-words">{queueError}</p>}
               {loading ? (
                 <div className="flex items-center justify-center py-12"><Loader2 className="w-6 h-6 text-[#ff91a6]/60 animate-spin" /></div>
               ) : tapes.length === 0 ? (
