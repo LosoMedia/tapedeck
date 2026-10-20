@@ -267,8 +267,8 @@ export function TapeDeckRebuild() {
           <label style={label}>Review submission
             <select style={field} value={reviewRoute} onChange={e => setReviewRoute(e.target.value as 'none' | 'dedicated' | 'random' | 'both')}>
               <option value="random">Random Pool — FREE during beta</option>
-              <option value="dedicated">Skippers &amp; Tippers — paid queue</option>
-              <option value="both">Submit to both queues (Random Pool stays free during beta)</option>
+              <option value="dedicated">Skippers &amp; Tippers — $3 minimum, PayPal planned</option>
+              <option value="both">Submit to both queues (Random Pool free during beta; paid queue $3 minimum)</option>
               <option value="none">Publish only — no review yet</option>
             </select>
           </label>
