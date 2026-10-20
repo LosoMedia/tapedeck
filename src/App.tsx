@@ -13,10 +13,26 @@ function ProtectedReviewer() {
   const [checking, setChecking] = useState(true);
   const [allowed, setAllowed] = useState(false);
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { setAllowed(!!data.session); setChecking(false); });
+    let active = true;
+    async function checkAccess() {
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+      if (!user) { if (active) setChecking(false); return; }
+      const { data: roleRow, error } = await supabase
+        .from('tapedeck_user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!active) return;
+      const approved = !error && (roleRow?.role === 'reviewer' || roleRow?.role === 'admin');
+      setAllowed(approved);
+      setChecking(false);
+    }
+    void checkAccess();
+    return () => { active = false; };
   }, []);
-  if (checking) return <div style={{ minHeight: '100vh', background: '#070b14' }} />;
-  return allowed ? <ReviewerPage /> : <Navigate to="/tapedeck/auth" replace />;
+  if (checking) return <div style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', display: 'grid', placeItems: 'center' }}>Checking reviewer approval…</div>;
+  return allowed ? <ReviewerPage /> : <Navigate to="/tapedeck/dashboard" replace />;
 }
 
 function App() {
