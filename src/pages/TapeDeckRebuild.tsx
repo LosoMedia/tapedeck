@@ -23,7 +23,7 @@ function coverStyle(index: number): React.CSSProperties {
 }
 
 export function TapeDeckRebuild() {
-  const [sessionUser, setSessionUser] = useState<{ id: string; email?: string } | null>(null);
+  const [sessionUser, setSessionUser] = useState<{ id: string; email?: string; accountType?: string } | null>(null);
   const [tapes, setTapes] = useState<TapeRow[]>([]);
   const [search, setSearch] = useState('');
   const [activeGenre, setActiveGenre] = useState('All music');
@@ -51,7 +51,7 @@ export function TapeDeckRebuild() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       const user = data.session?.user;
-      setSessionUser(user ? { id: user.id, email: user.email } : null);
+      setSessionUser(user ? { id: user.id, email: user.email, accountType: String(user.user_metadata?.account_type || 'artist') } : null);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user;
@@ -170,7 +170,7 @@ export function TapeDeckRebuild() {
             <a className="td-link" href="#discover">Discover</a><a className="td-link" href="#community">Community</a><a className="td-link" href="#upload">Upload music</a><Link className="td-link" to="/tapedeck/queue">Review Queue</Link>
           </nav>
           <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
-            {sessionUser ? <><Link to="/tapedeck/profile" className="td-link" style={{ color: gold }}>My Profile</Link><span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#202020', color: '#e2e8f0', borderColor: '#383838', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
+            {sessionUser ? <><Link to={sessionUser.accountType === 'reviewer' ? '/tapedeck/reviewer' : '/tapedeck/dashboard'} className="td-link" style={{ color: gold }}>{sessionUser.accountType === 'reviewer' ? 'Reviewer Console' : 'Artist Dashboard'}</Link>{sessionUser.accountType !== 'reviewer' && <Link to="/tapedeck/profile" className="td-link">My Profile</Link>}<span className="td-muted" style={{ maxWidth: 145, overflow: 'hidden', textOverflow: 'ellipsis' }}>{sessionUser.email || 'Member'}</span><button onClick={signOut} title="Sign out" style={{ ...button, background: '#202020', color: '#e2e8f0', borderColor: '#383838', padding: '9px 10px' }}><LogOut size={15} /></button></> : <Link to="/tapedeck/auth" style={{ ...button, padding: '10px 14px' }}>Sign in <ArrowUpRight size={15} /></Link>}
           </div>
         </div>
       </header>
