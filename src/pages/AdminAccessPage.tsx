@@ -14,14 +14,17 @@ export function AdminAccessPage() {
   const [requests, setRequests] = useState<RequestRow[]>([]);
   const [roles, setRoles] = useState<RoleRow[]>([]);
   const [error, setError] = useState('');
+  const [accessError, setAccessError] = useState('');
   const [busyId, setBusyId] = useState('');
 
   const load = useCallback(async () => {
     setError('');
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) { setChecking(false); return; }
+    const { data: userData, error: authError } = await supabase.auth.getUser();
+    if (authError) { setAccessError('Could not verify your sign-in: ' + authError.message); setChecking(false); return; }
+    if (!userData.user) { setAccessError('You are not signed in to this Tape Deck session. Sign in, then open Admin Access again.'); setChecking(false); return; }
     const { data: myRole, error: roleError } = await supabase.from('tapedeck_user_roles').select('role').eq('user_id', userData.user.id).maybeSingle();
-    if (roleError || myRole?.role !== 'admin') { setIsAdmin(false); setChecking(false); return; }
+    if (roleError) { setAccessError('Could not check your administrator role: ' + roleError.message); setIsAdmin(false); setChecking(false); return; }
+    if (myRole?.role !== 'admin') { setAccessError('This signed-in account has the role "' + (myRole?.role || 'no role row') + '", not "admin". Sign in with the account that was granted administrator access.'); setIsAdmin(false); setChecking(false); return; }
     setIsAdmin(true);
     const [{ data: requestRows, error: requestError }, { data: roleRows, error: rolesError }] = await Promise.all([
       supabase.from('tapedeck_reviewer_requests').select('id,user_id,status,message,created_at').order('created_at', { ascending: true }),
@@ -61,7 +64,7 @@ export function AdminAccessPage() {
   };
 
   if (checking) return <main style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', padding: 24 }}>Checking administrator access…</main>;
-  if (!isAdmin) return <Navigate to="/tapedeck/dashboard" replace />;
+  if (!isAdmin) return <main style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', padding: '32px 18px' }}><div style={{ maxWidth: 720, margin: '0 auto' }}><p style={{ color: '#ff3b5c', fontWeight: 900, letterSpacing: 2 }}>LOSOMEDIA / ACCESS CHECK</p><h1>Admin access could not be verified</h1><p style={{ color: '#fecaca', lineHeight: 1.7, overflowWrap: 'anywhere' }}>{accessError || 'Administrator access was not granted to this signed-in account.'}</p><p style={{ color: '#9ba7b8', lineHeight: 1.7 }}>This message includes the actual check result so we can fix the cause instead of silently sending you back to the dashboard.</p><Link to="/tapedeck" style={{ color: '#ff91a6' }}>← Back to Tape Deck</Link></div></main>;
 
   return <main style={{ minHeight: '100vh', background: '#090909', color: '#f4f5f7', fontFamily: 'Inter,system-ui,sans-serif', padding: '24px 16px 48px' }}>
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
