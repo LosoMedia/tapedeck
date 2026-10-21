@@ -450,7 +450,7 @@ export function ReviewerPage() {
                     </div>
                     <div className="rounded-xl border border-ink-600/50 bg-ink-900/70 p-4 sm:p-5">
                       <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ff91a6]/75 mb-3">Now Playing</div>
-                      <AudioPlayer title={selectedTape.title} artist={selectedTape.artist} duration={selectedTape.duration} />
+                      <AudioPlayer title={selectedTape.title} artist={selectedTape.artist} duration={selectedTape.duration} audioUrl={selectedTape.audio_url} />
                     </div>
                     {selectedTape.description && <p className="text-sm text-cream-200/60 leading-relaxed mt-5">{selectedTape.description}</p>}
                     <div className="mt-6">
