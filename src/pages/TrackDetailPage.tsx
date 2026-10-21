@@ -64,6 +64,50 @@ export function TrackDetailPage() {
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewNotice, setReviewNotice] = useState('');
+  const [queueBusy, setQueueBusy] = useState(false);
+  const [queueNotice, setQueueNotice] = useState('');
+  const [queueError, setQueueError] = useState('');
+
+
+  async function submitExistingTrackToQueue(queueType: 'random' | 'dedicated') {
+    if (!track || !userId) {
+      setQueueError('Sign in before adding a track to the review queue.');
+      return;
+    }
+    if (track.artist_id !== userId) {
+      setQueueError('Only the account that owns this track can submit it to a review queue.');
+      return;
+    }
+    setQueueBusy(true);
+    setQueueError('');
+    setQueueNotice('');
+    const { data: existing, error: lookupError } = await supabase
+      .from('tape_review_queue')
+      .select('id,status')
+      .eq('tape_id', track.id)
+      .eq('queue_type', queueType)
+      .in('status', ['waiting', 'reviewing'])
+      .limit(1);
+    if (lookupError) {
+      setQueueError('Could not check the review queue: ' + lookupError.message);
+      setQueueBusy(false);
+      return;
+    }
+    if (existing && existing.length > 0) {
+      setQueueNotice(queueType === 'random' ? 'This track is already in the Random Pool.' : 'This track is already in Skippers & Tippers.');
+      setQueueBusy(false);
+      return;
+    }
+    const { error: insertError } = await supabase.from('tape_review_queue').insert({
+      tape_id: track.id,
+      artist_id: userId,
+      queue_type: queueType,
+      status: 'waiting',
+    });
+    if (insertError) setQueueError('Could not add this track to the queue: ' + insertError.message);
+    else setQueueNotice(queueType === 'random' ? 'Added to the free Random Pool queue.' : 'Added to Skippers & Tippers.');
+    setQueueBusy(false);
+  }
 
   async function loadReviews(id: string) {
     const { data, error: reviewLoadError } = await supabase.from('tape_reviews').select('*').eq('tape_id', id).order('created_at', { ascending: false });
@@ -192,11 +236,17 @@ export function TrackDetailPage() {
           <div className="track-muted" style={{ borderTop: '1px solid #303030', marginTop: 20, paddingTop: 14 }}>Published {track.created_at ? new Date(track.created_at).toLocaleDateString() : 'date unavailable'}</div>
         </section>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 18 }}>
+          {track.artist_id === userId && <>
+            <button className="track-button" disabled={queueBusy} onClick={() => void submitExistingTrackToQueue('random')} style={{ cursor: queueBusy ? 'wait' : 'pointer', opacity: queueBusy ? .65 : 1 }}>{queueBusy ? 'Adding…' : 'Add to Random Pool (Free)'}</button>
+            <button className="track-button" disabled={queueBusy} onClick={() => void submitExistingTrackToQueue('dedicated')} style={{ cursor: queueBusy ? 'wait' : 'pointer', opacity: queueBusy ? .65 : 1, background: '#202020', color: '#ffc0cb', borderColor: '#63303b' }}>Add to Skippers & Tippers</button>
+          </>}
           {track.artist_id && <Link className="track-button" to={'/tapedeck/artist/' + track.artist_id}><UserRound size={16} /> View artist profile</Link>}
           <Link to="/tapedeck" className="track-button" style={{ background: '#202020', color: '#e2e8f0', borderColor: '#383838' }}>Explore more music</Link>
           <button className="track-button" onClick={openReview} style={{ cursor: 'pointer' }}>Write a review</button>
         </div>
 
+        {queueNotice && <p role="status" style={{ marginTop: 14, padding: 12, borderRadius: 10, background: '#10281c', color: '#b9f6ce', border: '1px solid #27563c' }}>{queueNotice}</p>}
+        {queueError && <p role="alert" style={{ marginTop: 14, padding: 12, borderRadius: 10, background: '#351a22', color: '#fecaca', border: '1px solid #6e303b', overflowWrap: 'anywhere' }}>{queueError}</p>}
         <section style={{ ...panel, marginTop: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div><h2 style={{ margin: 0, fontSize: 22 }}>Community reviews</h2><p className="track-muted" style={{ margin: '5px 0 0' }}>Specific, constructive feedback. Five stages, three answers per stage.</p></div>
